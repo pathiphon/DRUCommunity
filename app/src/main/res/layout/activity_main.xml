@@ -17,4 +17,6 @@
             android:background="@drawable/shape_gold_frame"
             app:menu="@menu/bottom_navigation" />
 
+<!--    todo-->
+
 </RelativeLayout>
