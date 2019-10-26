@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/RelativeLayout">
+
+    <LinearLayout style="@style/LinearLayoutVertical">
+
+        <ImageView
+                android:id="@+id/mImgProfile"
+                style="@style/ImageView" />
+
+        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+
+            <EditText
+                    android:id="@+id/mEdtName"
+                    style="@style/EditText"
+                    android:hint="@string/name" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+
+            <EditText
+                    android:id="@+id/mEdtStatus"
+                    style="@style/EditText"
+                    android:hint="@string/status" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+                android:id="@+id/mBtnSave"
+                style="@style/ButtonMatch"
+                android:text="@string/save" />
+
+        <TextView
+                android:id="@+id/mTvVerification"
+                style="@style/TextViewSmall"
+                android:layout_gravity="end"
+                android:text="@string/verification" />
+    </LinearLayout>
+
+    <LinearLayout
+            style="@style/LinearLayoutVertical"
+            android:layout_alignParentBottom="true">
+
+        <Button
+                android:id="@+id/mBtnChangeEmail"
+                style="@style/ButtonMatch"
+                android:text="@string/change_e_mail" />
+
+        <Button
+                android:id="@+id/mBtnChangePassword"
+                style="@style/ButtonMatch"
+                android:text="@string/change_password" />
+
+        <Button
+                android:id="@+id/mBtnLogout"
+                style="@style/ButtonMatch"
+                android:text="@string/logout" />
+    </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/mProgressBar"
+            style="@style/ProgressBar" />
+</RelativeLayout>

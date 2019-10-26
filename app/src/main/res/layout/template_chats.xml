@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayout"
+        android:background="@color/gray"
+        android:padding="@dimen/zero">
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            style="@style/RecyclerView"
+            android:layout_above="@+id/send"
+            android:layout_marginBottom="@dimen/layout"
+            tools:listitem="@layout/item_chat_left" />
+
+    <LinearLayout
+            android:id="@+id/send"
+            style="@style/LinearLayoutHorizontal"
+            android:layout_alignParentBottom="true">
+
+        <ImageView
+                android:id="@+id/mImgImage"
+                android:layout_width="@dimen/image_icon_message"
+                android:layout_height="@dimen/image_icon_message"
+                android:src="@drawable/ic_image_black" />
+
+        <EditText
+                android:id="@+id/mEdtSend"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/five"
+                android:layout_marginRight="@dimen/five"
+                android:layout_weight="1"
+                android:hint="@string/message"
+                android:maxLines="5" />
+
+        <ImageView
+                android:id="@+id/mImgSend"
+                android:layout_width="@dimen/image_icon_message"
+                android:layout_height="@dimen/image_icon_message"
+                android:src="@drawable/ic_send_black" />
+    </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/mProgressBar"
+            style="@style/ProgressBar" />
+
+</RelativeLayout>

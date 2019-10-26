@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="layout">10dp</dimen>
+    <dimen name="image">200dp</dimen>
+    <dimen name="image_home">60dp</dimen>
+    <dimen name="image_follow">50dp</dimen>
+    <dimen name="state">20dp</dimen>
+    <dimen name="login">30dp</dimen>
+    <dimen name="zero">0dp</dimen>
+    <dimen name="little">2dp</dimen>
+    <dimen name="message">300dp</dimen>
+    <dimen name="five">5dp</dimen>
+    <dimen name="image_icon_message">30dp</dimen>
+    <dimen name="info_window">120dp</dimen>
+</resources>

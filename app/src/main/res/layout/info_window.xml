@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/RelativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/info_window">
+
+    <LinearLayout style="@style/LinearLayoutHorizontal">
+
+        <ImageView
+                android:id="@+id/mImgProfile"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_user" />
+
+        <LinearLayout
+                style="@style/LinearLayoutVertical"
+                android:layout_width="0dp"
+                android:layout_weight="1">
+
+            <TextView
+                    android:id="@+id/mTvName"
+                    style="@style/TextViewLarge"
+                    android:text="@string/name" />
+
+            <TextView
+                    android:id="@+id/mTvStatus"
+                    style="@style/TextView"
+                    android:text="@string/status" />
+
+            <TextView
+                    android:id="@+id/mTvLocation"
+                    style="@style/TextView"
+                    android:text="@string/location"
+                    android:textColor="#81C784" />
+        </LinearLayout>
+
+        <ImageView
+                android:id="@+id/mImgState"
+                style="@style/ImageViewState"
+                android:layout_gravity="top" />
+    </LinearLayout>
+</RelativeLayout>

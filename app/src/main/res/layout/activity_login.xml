@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayout"
+        tools:context=".LoginActivity">
+
+    <LinearLayout
+            android:id="@+id/mLogin"
+            style="@style/LinearLayoutVertical"
+            android:layout_margin="@dimen/login"
+            android:background="@drawable/shape_gold_frame"
+            android:padding="@dimen/layout">
+
+        <ImageView
+                style="@style/ImageView"
+                android:src="@drawable/ic_dru" />
+
+        <TextView
+                style="@style/TextViewLarge"
+                android:text="@string/app_name" />
+
+        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+
+            <EditText
+                    android:id="@+id/mEdtEmail"
+                    style="@style/EditTextEmail"
+                    android:hint="@string/e_mail" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+
+            <EditText
+                    android:id="@+id/mEdtPassword"
+                    style="@style/EditTextPassword"
+                    android:hint="@string/password" />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+                style="@style/LinearLayoutHorizontal"
+                android:padding="@dimen/layout">
+
+            <Button
+                    android:id="@+id/mBtnReg"
+                    style="@style/Button"
+                    android:layout_marginTop="@dimen/zero"
+                    android:text="@string/register" />
+
+            <Button
+                    android:id="@+id/mBtnLogin"
+                    style="@style/Button"
+                    android:layout_marginStart="@dimen/layout"
+                    android:layout_marginTop="@dimen/zero"
+                    android:text="@string/login" />
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/mTvForgotPassword"
+                style="@style/TextViewSmall"
+                android:layout_gravity="start"
+                android:text="@string/forgot_your_password" />
+    </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/mProgressBar"
+            style="@style/ProgressBar" />
+</RelativeLayout>

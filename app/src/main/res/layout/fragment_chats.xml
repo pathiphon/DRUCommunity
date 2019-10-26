@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayout">
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            style="@style/RecyclerView"
+            tools:listitem="@layout/item_chat_list" />
+
+</RelativeLayout>

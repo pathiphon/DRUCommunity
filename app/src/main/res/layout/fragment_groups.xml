@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayout"
+        android:gravity="start"
+        tools:context=".fragments.GroupsFragment">
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/mFloatingActionButton"
+            style="@style/FloatingActionButton"
+            app:srcCompat="@drawable/ic_add_black" />
+
+</RelativeLayout>

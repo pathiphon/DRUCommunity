@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayout"
+        tools:context=".MessageActivity">
+
+    <include
+            android:id="@+id/friend"
+            style="@style/MatchWrap"
+            layout="@layout/item_user" />
+
+    <include
+            layout="@layout/template_chats"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/friend"
+            android:layout_marginTop="@dimen/layout" />
+</RelativeLayout>

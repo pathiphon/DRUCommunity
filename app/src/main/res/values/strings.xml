@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">DRU Community</string>
+    <string name="google_maps_key">AIzaSyBlfd83lHqLTBLee31ze-3Xlyah3_4FVBw</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="e_mail">E-mail</string>
+    <string name="register">Register</string>
+    <string name="re_password">Re - password</string>
+    <string name="name">Name</string>
+    <string name="reset">Reset</string>
+    <string name="home">Home</string>
+    <string name="chats">Chats</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="save">Save profile</string>
+    <string name="id">ID</string>
+    <string name="ok">OK</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="search">Search</string>
+    <string name="status">Status</string>
+    <string name="verification">Verification</string>
+    <string name="change_e_mail">Change e-mail</string>
+    <string name="change_password">Change password</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="new_e_mail">New E-mail</string>
+    <string name="map">Map</string>
+    <string name="follow_friend">Follow friend</string>
+    <string name="un_follow_friend">Un follow friend</string>
+    <string name="message">message...</string>
+    <string name="read">Read</string>
+    <string name="time">Time</string>
+    <string name="groups">Groups</string>
+    <string name="location">Location</string>
+    <string name="date">Date</string>
+    <string name="create_group">Create group</string>
+    <string name="public_chat">Public chat</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/MatchWrap"
+        android:layout_marginLeft="@dimen/layout"
+        android:layout_marginTop="@dimen/layout"
+        android:layout_marginRight="@dimen/layout">
+
+    <ImageView
+            android:id="@+id/mImgProfile"
+            style="@style/ImageView"
+            android:layout_width="@dimen/image_follow"
+            android:layout_height="@dimen/image_follow" />
+
+    <LinearLayout
+            style="@style/WrapMatch"
+            android:layout_width="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/layout"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/mTvName"
+                style="@style/TextView"
+                android:text="@string/name" />
+
+        <TextView
+                android:id="@+id/mTvStatus"
+                style="@style/TextViewSmall"
+                android:text="@string/status" />
+    </LinearLayout>
+
+    <ImageView
+            android:id="@+id/mImgState"
+            style="@style/ImageViewState" />
+</LinearLayout>

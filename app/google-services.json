@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1013131840626",
+    "firebase_url": "https://druchat.firebaseio.com",
+    "project_id": "druchat",
+    "storage_bucket": "druchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013131840626:android:8f4ee278a84396b8",
+        "android_client_info": {
+          "package_name": "com.comsci.druchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013131840626-l6ubfr8t8srh1or4qed4o7k26dftv5hl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.comsci.druchat",
+            "certificate_hash": "33d612a55cded18c73618179d84e8a91b959eb77"
+          }
+        },
+        {
+          "client_id": "1013131840626-scj1di63909p9aalmqcsmass0u657e56.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFi6LkqKRLhsDQnr2CvTq5vZEOoVdQgkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013131840626-scj1di63909p9aalmqcsmass0u657e56.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

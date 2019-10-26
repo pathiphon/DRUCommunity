@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        style="@style/RelativeLayoutDialog"
+        tools:context=".dialog.PublicChatsDialog">
+
+    <include
+            style="@style/MatchMatch"
+            layout="@layout/template_chats" />
+</RelativeLayout>

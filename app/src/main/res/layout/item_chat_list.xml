@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/MatchWrap"
+        android:layout_marginLeft="@dimen/layout"
+        android:layout_marginTop="@dimen/layout"
+        android:layout_marginRight="@dimen/layout"
+        android:gravity="center_vertical">
+
+    <ImageView
+            android:id="@+id/mImgProfile"
+            style="@style/ImageView"
+            android:layout_width="@dimen/image_follow"
+            android:layout_height="@dimen/image_follow" />
+
+    <TextView
+            android:id="@+id/mTvName"
+            style="@style/TextView"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/layout"
+            android:layout_weight="1"
+            android:text="@string/name" />
+
+    <TextView
+            android:id="@+id/mTvCount"
+            style="@style/TextView"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="bold" />
+</LinearLayout>
