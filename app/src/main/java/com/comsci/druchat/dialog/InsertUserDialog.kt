@@ -40,7 +40,7 @@ class InsertUserDialog : DialogFragment() {
         val builder = AlertDialog.Builder(activity!!)
             .setView(view)
             .setIcon(R.drawable.ic_user)
-            .setTitle(com.comsci.druchat.R.string.register)
+            .setTitle(R.string.register)
 
         bindWidgets(view)
         setEvents()
