@@ -8,21 +8,21 @@
                 android:id="@+id/mImgProfile"
                 style="@style/ImageView" />
 
-        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+        <com.google.android.material.textfield.TextInputLayout style="@style/MatchWrap">
 
             <EditText
                     android:id="@+id/mEdtName"
                     style="@style/EditText"
                     android:hint="@string/name" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout style="@style/MatchWrap">
+        <com.google.android.material.textfield.TextInputLayout style="@style/MatchWrap">
 
             <EditText
                     android:id="@+id/mEdtStatus"
                     style="@style/EditText"
                     android:hint="@string/status" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
                 android:id="@+id/mBtnSave"

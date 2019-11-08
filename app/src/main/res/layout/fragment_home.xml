@@ -31,7 +31,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/search"
             style="@style/MatchWrap"
             android:layout_below="@+id/profile">
@@ -40,9 +40,9 @@
                 android:id="@+id/mEdtSearch"
                 style="@style/EditText"
                 android:hint="@string/search" />
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mRecyclerView"
             style="@style/RecyclerView"
             android:layout_below="@+id/search"

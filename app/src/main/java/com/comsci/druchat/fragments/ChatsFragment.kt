@@ -3,14 +3,14 @@ package com.comsci.druchat.fragments
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
@@ -48,7 +48,8 @@ class ChatsFragment : Fragment() {
 
         mUserItem = arrayListOf<UserItem>()
         mUnread = HashMap<String, String>()
-        mRecyclerView.layoutManager = LinearLayoutManager(MainActivity.mContext)
+        mRecyclerView.layoutManager =
+            LinearLayoutManager(MainActivity.mContext)
 
         return view
     }

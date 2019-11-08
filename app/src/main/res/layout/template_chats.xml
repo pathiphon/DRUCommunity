@@ -5,7 +5,7 @@
         android:background="@color/gray"
         android:padding="@dimen/zero">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mRecyclerView"
             style="@style/RecyclerView"
             android:layout_above="@+id/send"

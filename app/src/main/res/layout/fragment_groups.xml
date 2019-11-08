@@ -6,7 +6,7 @@
         android:gravity="start"
         tools:context=".fragments.GroupsFragment">
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/mFloatingActionButton"
             style="@style/FloatingActionButton"
             app:srcCompat="@drawable/ic_add_black" />

@@ -3,7 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         style="@style/RelativeLayout">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mRecyclerView"
             style="@style/RecyclerView"
             tools:listitem="@layout/item_chat_list" />

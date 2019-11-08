@@ -15,7 +15,6 @@ import com.luseen.simplepermission.permissions.Permission
 import com.luseen.simplepermission.permissions.PermissionActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
-
 class LoginActivity : PermissionActivity() {
 
     companion object {

@@ -2,10 +2,6 @@ package com.comsci.druchat.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,6 +10,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
@@ -52,7 +52,8 @@ class HomeFragment : Fragment() {
         setEvents()
 
         mUserItem = arrayListOf<UserItem>()
-        mRecyclerView.layoutManager = LinearLayoutManager(MainActivity.mContext)
+        mRecyclerView.layoutManager =
+            LinearLayoutManager(MainActivity.mContext)
 
         feedDatabase()
 

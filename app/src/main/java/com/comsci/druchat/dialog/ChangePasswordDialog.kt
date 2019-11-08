@@ -3,13 +3,13 @@ package com.comsci.druchat.dialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.comsci.druchat.LoginActivity
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R

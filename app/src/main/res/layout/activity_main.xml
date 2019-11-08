@@ -10,7 +10,7 @@
             style="@style/MatchMatch"
             android:layout_above="@id/mBottomNavigationView" />
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/mBottomNavigationView"
             style="@style/MatchWrap"
             android:layout_alignParentBottom="true"
