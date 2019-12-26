@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout">10dp</dimen>
-    <dimen name="image">200dp</dimen>
+    <dimen name="image">100dp</dimen>
     <dimen name="image_home">60dp</dimen>
     <dimen name="image_follow">50dp</dimen>
     <dimen name="state">20dp</dimen>

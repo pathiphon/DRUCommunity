@@ -8,11 +8,11 @@
             android:id="@+id/mLogin"
             style="@style/LinearLayoutVertical"
             android:layout_margin="@dimen/login"
-            android:background="@drawable/shape_gold_frame"
             android:padding="@dimen/layout">
 
         <ImageView
-                style="@style/ImageView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:src="@drawable/ic_dru" />
 
         <TextView
