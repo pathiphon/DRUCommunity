@@ -45,7 +45,7 @@ class ForgotPasswordDialog : DialogFragment() {
     private fun setEvents() {
         mBtnReset.setOnClickListener {
             mProgressBar.visibility = View.VISIBLE
-            dialog.setCanceledOnTouchOutside(false)
+            dialog!!.setCanceledOnTouchOutside(false)
             mEdtEmail.isEnabled = false
             mBtnReset.isEnabled = false
 
@@ -65,10 +65,10 @@ class ForgotPasswordDialog : DialogFragment() {
                     mAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
                         mProgressBar.visibility = View.INVISIBLE
                         if (task.isSuccessful) {
-                            dialog.dismiss()
+                            dialog!!.dismiss()
                             Toast.makeText(context, "Please check you Email", Toast.LENGTH_LONG).show()
                         } else {
-                            dialog.setCancelable(true)
+                            dialog!!.setCancelable(true)
                             mEdtEmail.isEnabled = true
                             mBtnReset.isEnabled = true
 

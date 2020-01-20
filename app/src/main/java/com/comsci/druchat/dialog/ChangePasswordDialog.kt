@@ -86,7 +86,7 @@ class ChangePasswordDialog : DialogFragment() {
         }
 
         mProgressBar.visibility = View.VISIBLE
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
         mEdtOldPassword.isEnabled = false
         mEdtNewPassword.isEnabled = false
         mEdtRePassword.isEnabled = false
@@ -96,7 +96,7 @@ class ChangePasswordDialog : DialogFragment() {
         mUser.reauthenticate(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 mUser.updatePassword(newPassword).addOnCompleteListener { task ->
-                    dialog.dismiss()
+                    dialog!!.dismiss()
                     mProgressBar.visibility = View.GONE
                     if (task.isSuccessful) {
                         FirebaseAuth.getInstance().signOut()
@@ -110,7 +110,7 @@ class ChangePasswordDialog : DialogFragment() {
                     }
                 }
             } else {
-                dialog.dismiss()
+                dialog!!.dismiss()
                 mProgressBar.visibility = View.GONE
                 Toast.makeText(MainActivity.mContext, task.exception!!.message, Toast.LENGTH_LONG).show()
             }

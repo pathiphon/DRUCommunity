@@ -72,7 +72,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private fun initChat(view: View) {
         val mFloatingActionButton = view.findViewById(R.id.mFloatingActionButton) as FloatingActionButton
         mFloatingActionButton.setOnClickListener {
-            PublicChatsDialog().show(fragmentManager, null)
+            PublicChatsDialog().show(fragmentManager!!, null)
         }
     }
 

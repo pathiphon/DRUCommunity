@@ -130,7 +130,7 @@ class InsertUserDialog : DialogFragment() {
         }
 
         mProgressBar.visibility = View.VISIBLE
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
         mEdtName.isEnabled = false
         mEdtEmail.isEnabled = false
         mEdtPassword.isEnabled = false
@@ -143,7 +143,7 @@ class InsertUserDialog : DialogFragment() {
             if (task.isSuccessful) {
                 updateProfile(name, mAuth.currentUser!!.uid)
             } else {
-                dialog.dismiss()
+                dialog!!.dismiss()
                 mProgressBar.visibility = View.GONE
                 if (task.exception is FirebaseAuthUserCollisionException) {
                     Toast.makeText(context, "You are already registered", Toast.LENGTH_LONG).show()

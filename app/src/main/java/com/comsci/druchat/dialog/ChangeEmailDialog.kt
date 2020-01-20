@@ -74,7 +74,7 @@ class ChangeEmailDialog : DialogFragment() {
         }
 
         mProgressBar.visibility = View.VISIBLE
-        dialog.setCanceledOnTouchOutside(false)
+        dialog!!.setCanceledOnTouchOutside(false)
         mEdtNewEmail.isEnabled = false
         mEdtConfirmPassword.isEnabled = false
         mBtnChangeEmail.isEnabled = false
@@ -83,7 +83,7 @@ class ChangeEmailDialog : DialogFragment() {
         mUser.reauthenticate(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 mUser.updateEmail(email).addOnCompleteListener { task ->
-                    dialog.dismiss()
+                    dialog!!.dismiss()
                     mProgressBar.visibility = View.GONE
                     if (task.isSuccessful) {
                         FirebaseAuth.getInstance().signOut()
@@ -97,7 +97,7 @@ class ChangeEmailDialog : DialogFragment() {
                     }
                 }
             } else {
-                dialog.dismiss()
+                dialog!!.dismiss()
                 mProgressBar.visibility = View.GONE
                 Toast.makeText(MainActivity.mContext, task.exception!!.message, Toast.LENGTH_LONG).show()
             }
