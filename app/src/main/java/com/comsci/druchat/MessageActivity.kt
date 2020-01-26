@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
@@ -20,9 +18,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import com.adedom.library.extension.loadBitmap
+import com.adedom.library.extension.loadCircle
+import com.adedom.library.extension.loadImage
 import com.comsci.druchat.model.ChatListItem
 import com.comsci.druchat.model.ChatsItem
 import com.comsci.druchat.model.UserItem
@@ -88,9 +86,7 @@ class MessageActivity : AppCompatActivity() {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.getValue(UserItem::class.java)
-                if (user!!.imageURL != "default") {
-                    Glide.with(mContext).load(user.imageURL).circleCrop().into(mImgProfile)
-                }
+                if (user!!.imageURL != "default") mImgProfile.loadCircle(user.imageURL)
                 mTvName.text = user.name
                 mTvStatus.text = user.status
                 if (user.state != "offline") {
@@ -123,7 +119,8 @@ class MessageActivity : AppCompatActivity() {
         mLocationSwitchStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (LocationManager.PROVIDERS_CHANGED_ACTION == intent.action) {
-                    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    val locationManager =
+                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
                     val isGpsEnabled =
                         locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) //NETWORK_PROVIDER
 
@@ -197,7 +194,7 @@ class MessageActivity : AppCompatActivity() {
                 .format(Calendar.getInstance().time)
             val chat = ChatsItem(
                 mUser.uid, mUserId, message, "", dateTime,
-                MainActivity.mLatLng.latitude, MainActivity.mLatLng.longitude
+                MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
             )
             val key = mDatabaseChats.push().key
             mDatabaseChats.child(key!!).setValue(chat).addOnCompleteListener { task ->
@@ -254,7 +251,7 @@ class MessageActivity : AppCompatActivity() {
                             .format(Calendar.getInstance().time)
                         val chat = ChatsItem(
                             mUser.uid, mUserId, "", uri, dateTime,
-                            MainActivity.mLatLng.latitude, MainActivity.mLatLng.longitude
+                            MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
                         )
                         val key = mDatabaseChats.push().key
                         mDatabaseChats.child(key!!).setValue(chat).addOnCompleteListener { task ->
@@ -263,14 +260,15 @@ class MessageActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        Toast.makeText(MainActivity.mContext, "Failed!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(MainActivity.sContext, "Failed!", Toast.LENGTH_LONG).show()
                     }
                 }.addOnFailureListener { exception ->
                     mProgressBar.visibility = View.INVISIBLE
-                    Toast.makeText(MainActivity.mContext, "${exception.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(MainActivity.sContext, "${exception.message}", Toast.LENGTH_LONG)
+                        .show()
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(MainActivity.mContext, "${result.error}", Toast.LENGTH_LONG).show()
+                Toast.makeText(MainActivity.sContext, "${result.error}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -280,9 +278,11 @@ class MessageActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): CustomHolder {
             val view: View = if (MSG_TYPE == MyMessageType.CHAT_RIGHT) {
-                LayoutInflater.from(viewGroup.context).inflate(R.layout.item_chat_right, viewGroup, false)
+                LayoutInflater.from(viewGroup.context)
+                    .inflate(R.layout.item_chat_right, viewGroup, false)
             } else {
-                LayoutInflater.from(viewGroup.context).inflate(R.layout.item_chat_left, viewGroup, false)
+                LayoutInflater.from(viewGroup.context)
+                    .inflate(R.layout.item_chat_left, viewGroup, false)
             }
             return CustomHolder(view)
         }
@@ -317,20 +317,10 @@ class MessageActivity : AppCompatActivity() {
             if (chat.message.isEmpty()) {
                 holder.mTvMessage.visibility = View.GONE
                 holder.mImgImage.visibility = View.VISIBLE
-
-                Glide.with(mContext)
-                    .asBitmap()
-                    .load(chat.image)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onLoadCleared(placeholder: Drawable?) {}
-
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            if (resource.width > resource.height) {
-                                holder.mImgImage.layoutParams.height = 300
-                            }
-                            Glide.with(mContext).load(chat.image).into(holder.mImgImage)
-                        }
-                    })
+                holder.mImgImage.loadBitmap(chat.image, {
+                    if (it.width > it.height) holder.mImgImage.layoutParams.height = 300
+                    holder.mImgImage.loadImage(chat.image)
+                })
             }
 
             //location

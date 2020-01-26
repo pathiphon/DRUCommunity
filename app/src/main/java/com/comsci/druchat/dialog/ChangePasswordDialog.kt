@@ -102,17 +102,17 @@ class ChangePasswordDialog : DialogFragment() {
                         FirebaseAuth.getInstance().signOut()
                         activity!!.finish()
                         startActivity(
-                            Intent(MainActivity.mContext, LoginActivity::class.java)
+                            Intent(MainActivity.sContext, LoginActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         )
                     } else {
-                        Toast.makeText(MainActivity.mContext, task.exception!!.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(MainActivity.sContext, task.exception!!.message, Toast.LENGTH_LONG).show()
                     }
                 }
             } else {
                 dialog!!.dismiss()
                 mProgressBar.visibility = View.GONE
-                Toast.makeText(MainActivity.mContext, task.exception!!.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(MainActivity.sContext, task.exception!!.message, Toast.LENGTH_LONG).show()
             }
         }
     }

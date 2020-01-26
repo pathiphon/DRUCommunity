@@ -37,7 +37,7 @@
             android:layout_below="@+id/profile">
 
         <EditText
-                android:id="@+id/mEdtSearch"
+                android:id="@+id/mEtSearch"
                 style="@style/EditText"
                 android:hint="@string/search" />
     </com.google.android.material.textfield.TextInputLayout>

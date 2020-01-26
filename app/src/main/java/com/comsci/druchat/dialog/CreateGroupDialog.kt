@@ -43,7 +43,7 @@ class CreateGroupDialog : DialogFragment() {
 
     private fun setEvents() {
         mBtnCreateGroup.setOnClickListener {
-            Toast.makeText(MainActivity.mContext, "Coming soon!!!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(MainActivity.sContext, "Coming soon!!!", Toast.LENGTH_SHORT).show()
         }
     }
 

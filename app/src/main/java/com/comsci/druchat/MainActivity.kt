@@ -8,12 +8,14 @@ import android.content.IntentFilter
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import com.adedom.library.extension.exitApplication
+import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.fragments.*
 import com.comsci.druchat.utility.MyCode
 import com.google.android.gms.common.ConnectionResult
@@ -23,10 +25,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),
@@ -35,28 +33,30 @@ class MainActivity : AppCompatActivity(),
     GoogleApiClient.OnConnectionFailedListener,
     LocationListener {
 
-    private var mCountExit: Int = 0
-    private var mUser: FirebaseUser? = null
-    private lateinit var mDatabaseUsers: DatabaseReference
+    val TAG = "MainActivity"
+    private lateinit var viewModel: BaseViewModel
+
     private lateinit var mLocationSwitchStateReceiver: BroadcastReceiver
 
+    private lateinit var mGoogleApiClient: GoogleApiClient
+    private lateinit var mLocationRequest: LocationRequest
+
     companion object {
-        lateinit var mGoogleApiClient: GoogleApiClient
-        lateinit var mLocationRequest: LocationRequest
-        lateinit var mLatLng: LatLng
-        lateinit var mContext: Context
+        lateinit var sLatLng: LatLng
+        lateinit var sContext: Context
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mContext = baseContext
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
-        mUser = FirebaseAuth.getInstance().currentUser
-        if (mUser == null) {
+        sContext = baseContext
+
+        if (viewModel.currentUser() == null) {
             startActivity(
-                Intent(mContext, LoginActivity::class.java)
+                Intent(sContext, LoginActivity::class.java)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             )
             finish()
@@ -66,11 +66,10 @@ class MainActivity : AppCompatActivity(),
         locationListener()
         locationSetting()
 
-        mDatabaseUsers = FirebaseDatabase.getInstance().getReference("Users")
-
         mBottomNavigationView.setOnNavigationItemSelectedListener(this)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, HomeFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, HomeFragment())
+                .commit()
         }
     }
 
@@ -79,8 +78,10 @@ class MainActivity : AppCompatActivity(),
         mLocationSwitchStateReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (LocationManager.PROVIDERS_CHANGED_ACTION == intent.action) {
-                    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                    val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) //NETWORK_PROVIDER
+                    val locationManager =
+                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                    val isGpsEnabled =
+                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) //NETWORK_PROVIDER
 
                     if (!isGpsEnabled) {
                         locationSetting()
@@ -101,10 +102,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun locationSetting() {
-        if (!MyCode.locationSetting(mContext)) {
+        if (!MyCode.locationSetting(sContext)) {
             startActivityForResult(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1234)
         } else {
-            mGoogleApiClient = GoogleApiClient.Builder(mContext)
+            mGoogleApiClient = GoogleApiClient.Builder(sContext)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -120,8 +121,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (!MyCode.locationSetting(mContext) && requestCode == 1234) {
-            Toast.makeText(mContext, "Please grant location", Toast.LENGTH_LONG).show()
+        if (!MyCode.locationSetting(sContext) && requestCode == 1234) {
+            Toast.makeText(sContext, "Please grant location", Toast.LENGTH_LONG).show()
             finishAffinity()
         }
     }
@@ -139,7 +140,11 @@ class MainActivity : AppCompatActivity(),
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdate() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this)
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+            mGoogleApiClient,
+            mLocationRequest,
+            this
+        )
     }
     //endregion
 
@@ -154,24 +159,24 @@ class MainActivity : AppCompatActivity(),
             R.id.nav_profile -> selectedFragment = ProfileFragment()
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, selectedFragment!!).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, selectedFragment!!)
+            .commit()
         return true
     }
 
     override fun onLocationChanged(location: Location) {
-        mLatLng = LatLng(location.latitude, location.longitude)
+        sLatLng = LatLng(location.latitude, location.longitude)
 
         val hashMap = HashMap<String, Any>()
-        hashMap["latitude"] = mLatLng.latitude
-        hashMap["longitude"] = mLatLng.longitude
-        mDatabaseUsers.child(mUser!!.uid).updateChildren(hashMap)
+        hashMap["latitude"] = sLatLng.latitude
+        hashMap["longitude"] = sLatLng.longitude
+        viewModel.setLatlng(hashMap)
     }
-
 
     override fun onResume() {
         super.onResume()
         locationListener(true)
-        MyCode.setState(mDatabaseUsers, mUser!!.uid, "online")
+        viewModel.setState("online")
         if (mGoogleApiClient.isConnected) {
             startLocationUpdate()
         }
@@ -180,16 +185,9 @@ class MainActivity : AppCompatActivity(),
     override fun onPause() {
         super.onPause()
         locationListener(false)
-        MyCode.setState(mDatabaseUsers, mUser!!.uid, "offline")
+        viewModel.setState("offline")
     }
 
-    override fun onBackPressed() {
-        if (mCountExit > 0) {
-            finishAffinity()
-        }
-        mCountExit++
-        Handler().postDelayed({ mCountExit = 0 }, 2000)
-        Toast.makeText(mContext, "Press back again to exit", Toast.LENGTH_SHORT).show()
-    }
+    override fun onBackPressed() = this.exitApplication()
 
 }

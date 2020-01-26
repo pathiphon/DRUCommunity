@@ -1,10 +1,6 @@
 package com.comsci.druchat.fragments
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import com.adedom.library.extension.loadBitmap
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.fragments.MapsFragment.Companion.mMarkerPeople
@@ -27,19 +23,15 @@ class People(googleMap: GoogleMap, users: ArrayList<UserItem>, user_id: String) 
             if (user.imageURL == "default") {
                 setMarker(googleMap, user, BitmapDescriptorFactory.fromResource(R.drawable.ic_user))
             } else {
-                Glide.with(MainActivity.mContext)
-                    .asBitmap()
-                    .load(user.imageURL)
-                    .circleCrop()
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            setMarker(googleMap, user, BitmapDescriptorFactory.fromBitmap(resource))
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            setMarker(googleMap, user, BitmapDescriptorFactory.fromResource(R.drawable.ic_user))
-                        }
-                    })
+                MainActivity.sContext.loadBitmap(user.imageURL, {
+                    setMarker(googleMap, user, BitmapDescriptorFactory.fromBitmap(it))
+                }, {
+                    setMarker(
+                        googleMap,
+                        user,
+                        BitmapDescriptorFactory.fromResource(R.drawable.ic_user)
+                    )
+                })
             }
         }
     }

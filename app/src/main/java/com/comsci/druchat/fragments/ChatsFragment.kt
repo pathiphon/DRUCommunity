@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
@@ -49,7 +49,7 @@ class ChatsFragment : Fragment() {
         mUserItem = arrayListOf<UserItem>()
         mUnread = HashMap<String, String>()
         mRecyclerView.layoutManager =
-            LinearLayoutManager(MainActivity.mContext)
+            LinearLayoutManager(MainActivity.sContext)
 
         return view
     }
@@ -117,7 +117,8 @@ class ChatsFragment : Fragment() {
 
     inner class CustomAdapter : RecyclerView.Adapter<CustomHolder>() {
         override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): CustomHolder {
-            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_chat_list, viewGroup, false)
+            val view = LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.item_chat_list, viewGroup, false)
             return CustomHolder(view)
         }
 
@@ -127,9 +128,7 @@ class ChatsFragment : Fragment() {
 
         override fun onBindViewHolder(holder: CustomHolder, position: Int) {
             val user = mUserItem[position]
-            if (user.imageURL != "default") {
-                Glide.with(MainActivity.mContext).load(user.imageURL).circleCrop().into(holder.mImgProfile)
-            }
+            if (user.imageURL != "default") holder.mImgProfile.loadCircle(user.imageURL)
             holder.mTvName.text = user.name
 
             if (mUnread["id"] == user.user_id) {
@@ -152,10 +151,10 @@ class ChatsFragment : Fragment() {
 
         init {
             itemView.setOnClickListener {
-                val user_id = mUserItem[adapterPosition].user_id
+                val userId = mUserItem[adapterPosition].user_id
                 startActivity(
-                    Intent(MainActivity.mContext, MessageActivity::class.java)
-                        .putExtra("user_id", user_id)
+                    Intent(MainActivity.sContext, MessageActivity::class.java)
+                        .putExtra("user_id", userId)
                 )
             }
         }

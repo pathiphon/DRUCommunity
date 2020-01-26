@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.bumptech.glide.Glide
+import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.LoginActivity
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
@@ -78,9 +78,9 @@ class InsertUserDialog : DialogFragment() {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
                 mImageUri = result.uri
-                Glide.with(context!!).load(mImageUri).circleCrop().into(mImgProfile)
+                mImgProfile.loadCircle(mImageUri.toString())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(MainActivity.mContext, "${result.error}", Toast.LENGTH_LONG).show()
+                Toast.makeText(MainActivity.sContext, "${result.error}", Toast.LENGTH_LONG).show()
             }
         }
     }

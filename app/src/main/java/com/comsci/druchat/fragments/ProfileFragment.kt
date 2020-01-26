@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
+import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.LoginActivity
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
@@ -70,9 +70,7 @@ class ProfileFragment : Fragment() {
                 mUserItem = dataSnapshot.getValue(UserItem::class.java)!!
                 mEdtName.setText(mUserItem.name)
                 mEdtStatus.setText(mUserItem.status)
-                if (mUserItem.imageURL != "default") {
-                    Glide.with(MainActivity.mContext).load(mUserItem.imageURL).circleCrop().into(mImgProfile)
-                }
+                if (mUserItem.imageURL != "default") mImgProfile.loadCircle(mUserItem.imageURL)
             }
         })
     }
@@ -109,7 +107,12 @@ class ProfileFragment : Fragment() {
                 ChangeEmailDialog().show(activity!!.supportFragmentManager, null)
             }
         }
-        mBtnChangePassword.setOnClickListener { ChangePasswordDialog().show(activity!!.supportFragmentManager, null) }
+        mBtnChangePassword.setOnClickListener {
+            ChangePasswordDialog().show(
+                activity!!.supportFragmentManager,
+                null
+            )
+        }
         mBtnLogout.setOnClickListener { logout() }
     }
 
@@ -119,10 +122,11 @@ class ProfileFragment : Fragment() {
                 FirebaseAuth.getInstance().signOut()
                 activity!!.finish()
                 startActivity(
-                    Intent(MainActivity.mContext, LoginActivity::class.java)
+                    Intent(MainActivity.sContext, LoginActivity::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 )
-                Toast.makeText(MainActivity.mContext, "Please check your email", Toast.LENGTH_LONG).show()
+                Toast.makeText(MainActivity.sContext, "Please check your email", Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -142,9 +146,9 @@ class ProfileFragment : Fragment() {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
                 mImageUri = result.uri
-                Glide.with(context!!).load(mImageUri).circleCrop().into(mImgProfile)
+                mImgProfile.loadCircle(mImageUri.toString())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(MainActivity.mContext, "${result.error}", Toast.LENGTH_LONG).show()
+                Toast.makeText(MainActivity.sContext, "${result.error}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -183,11 +187,16 @@ class ProfileFragment : Fragment() {
                                 updateProfile(task.result.toString())
                             } else {
                                 mProgressBar.visibility = View.INVISIBLE
-                                Toast.makeText(MainActivity.mContext, "Failed!", Toast.LENGTH_LONG).show()
+                                Toast.makeText(MainActivity.sContext, "Failed!", Toast.LENGTH_LONG)
+                                    .show()
                             }
                         }.addOnFailureListener { exception ->
                             mProgressBar.visibility = View.INVISIBLE
-                            Toast.makeText(MainActivity.mContext, "${exception.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                MainActivity.sContext,
+                                "${exception.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
@@ -204,7 +213,8 @@ class ProfileFragment : Fragment() {
             if (task.isSuccessful) {
                 feedProfile()
                 mImageUri = null
-                Toast.makeText(MainActivity.mContext, "Profile update complete", Toast.LENGTH_SHORT).show()
+                Toast.makeText(MainActivity.sContext, "Profile update complete", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -221,7 +231,7 @@ class ProfileFragment : Fragment() {
                 FirebaseAuth.getInstance().signOut()
                 activity!!.finish()
                 startActivity(
-                    Intent(MainActivity.mContext, LoginActivity::class.java)
+                    Intent(MainActivity.sContext, LoginActivity::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 )
             }.show()

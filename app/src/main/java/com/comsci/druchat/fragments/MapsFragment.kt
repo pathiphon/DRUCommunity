@@ -11,9 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
-import com.comsci.druchat.MainActivity.Companion.mContext
-import com.comsci.druchat.MainActivity.Companion.mLatLng
+import com.adedom.library.extension.loadImage
+import com.comsci.druchat.MainActivity.Companion.sContext
+import com.comsci.druchat.MainActivity.Companion.sLatLng
 import com.comsci.druchat.R
 import com.comsci.druchat.dialog.PublicChatsDialog
 import com.comsci.druchat.model.UserItem
@@ -53,7 +53,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         mUser = FirebaseAuth.getInstance().currentUser!!
         if (!mUser.isEmailVerified) {
-            Toast.makeText(mContext, "Click to Verify", Toast.LENGTH_LONG).show()
+            Toast.makeText(sContext, "Click to Verify", Toast.LENGTH_LONG).show()
             activity!!.supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, ProfileFragment()).commit()
         }
 
@@ -82,7 +82,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mGoogleMap.isMyLocationEnabled = true
 //        mGoogleMap.uiSettings.setAllGesturesEnabled(false)
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(mLatLng.latitude, mLatLng.longitude), 15.0F))
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(sLatLng.latitude, sLatLng.longitude), 15.0F))
         setMyUniversity(13.7337910, 100.4911897)
         setMyUniversity(13.5228417, 100.7525409)
         setPeopleLocation()
@@ -111,11 +111,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 } else {
                     //image
                     if (infoWindowData.imageURL != "default") {
-                        Glide.with(mContext).load(infoWindowData.imageURL).into(imgProfile)
+                        imgProfile.loadImage(infoWindowData.imageURL)
                     }
 
                     //location
-                    val list = Geocoder(mContext).getFromLocation(infoWindowData.latitude, infoWindowData.longitude, 1)
+                    val list = Geocoder(sContext).getFromLocation(infoWindowData.latitude, infoWindowData.longitude, 1)
                     val locality = if (list[0].locality != null) {
                         list[0].locality
                     } else {
