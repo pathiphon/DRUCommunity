@@ -9,7 +9,6 @@ import com.comsci.druchat.data.models.ChatLists
 import com.comsci.druchat.data.models.Follows
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.data.models.Users
-import com.comsci.druchat.model.ChatListItem
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -158,9 +157,9 @@ class BaseRepository {
                 onComplete?.invoke()
 
                 mChatList.child(currentUserId!!).child(otherId)
-                    .setValue(ChatListItem(key, otherId))
+                    .setValue(ChatLists(key, otherId))
                 mChatList.child(otherId).child(currentUserId)
-                    .setValue(ChatListItem(key, currentUserId))
+                    .setValue(ChatLists(key, currentUserId))
             }
         }
     }
