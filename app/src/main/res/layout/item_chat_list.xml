@@ -24,5 +24,6 @@
             android:id="@+id/mTvCount"
             style="@style/TextView"
             android:textColor="@android:color/holo_red_dark"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 </LinearLayout>

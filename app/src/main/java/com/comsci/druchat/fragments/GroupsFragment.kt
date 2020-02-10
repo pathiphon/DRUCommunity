@@ -11,25 +11,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class GroupsFragment : Fragment() {
 
-    private lateinit var mFloatingActionButton: FloatingActionButton
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_groups, container, false)
 
-        bindWidgets(view)
-        setEvents()
+        init(view)
 
         return view
     }
 
-    private fun bindWidgets(view: View) {
-        mFloatingActionButton = view.findViewById(R.id.mFloatingActionButton) as FloatingActionButton
-    }
-
-    private fun setEvents() = mFloatingActionButton.setOnClickListener {
-        CreateGroupDialog().show(activity!!.supportFragmentManager, null)
+    private fun init(view: View) {
+        view.findViewById<FloatingActionButton>(R.id.mFloatingActionButton).setOnClickListener {
+            CreateGroupDialog().show(activity!!.supportFragmentManager, null)
+        }
     }
 }

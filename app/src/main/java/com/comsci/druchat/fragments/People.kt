@@ -3,15 +3,15 @@ package com.comsci.druchat.fragments
 import com.adedom.library.extension.loadBitmap
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
+import com.comsci.druchat.data.models.Users
 import com.comsci.druchat.fragments.MapsFragment.Companion.mMarkerPeople
-import com.comsci.druchat.model.UserItem
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class People(googleMap: GoogleMap, users: ArrayList<UserItem>, user_id: String) {
+class People(googleMap: GoogleMap, users: ArrayList<Users>, user_id: String) {
 
     init {
         for (marker in mMarkerPeople) {
@@ -36,7 +36,7 @@ class People(googleMap: GoogleMap, users: ArrayList<UserItem>, user_id: String) 
         }
     }
 
-    private fun setMarker(googleMap: GoogleMap, user: UserItem, icon: BitmapDescriptor) {
+    private fun setMarker(googleMap: GoogleMap, user: Users, icon: BitmapDescriptor) {
         val marker = googleMap.addMarker(
             MarkerOptions()
                 .position(LatLng(user.latitude, user.longitude))

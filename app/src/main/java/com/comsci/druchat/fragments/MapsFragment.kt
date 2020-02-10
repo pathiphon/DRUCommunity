@@ -11,12 +11,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.loadImage
 import com.comsci.druchat.MainActivity.Companion.sContext
 import com.comsci.druchat.MainActivity.Companion.sLatLng
 import com.comsci.druchat.R
+import com.comsci.druchat.data.models.Users
+import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.dialog.PublicChatsDialog
-import com.comsci.druchat.model.UserItem
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -26,18 +29,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
-    val TAG = "MapsFragment"
-    private lateinit var mUserItem: ArrayList<UserItem>
-    private lateinit var mUser: FirebaseUser
+    private lateinit var viewModel: BaseViewModel
+
+    private lateinit var mUserItem: ArrayList<Users>
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mMapView: MapView
 
@@ -49,15 +46,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        mUser = FirebaseAuth.getInstance().currentUser!!
-        if (!mUser.isEmailVerified) {
+        if (!viewModel.currentUser()!!.isEmailVerified) {
             Toast.makeText(sContext, "Click to Verify", Toast.LENGTH_LONG).show()
-            activity!!.supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, ProfileFragment()).commit()
+            activity!!.supportFragmentManager.beginTransaction()
+                .replace(R.id.mFrameLayout, ProfileFragment()).commit()
         }
 
-        mUserItem = arrayListOf<UserItem>()
+        mUserItem = arrayListOf<Users>()
 
         val view = inflater.inflate(R.layout.fragment_maps, container, false)
         mMapView = view.findViewById(R.id.mMapView)
@@ -70,7 +69,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun initChat(view: View) {
-        val mFloatingActionButton = view.findViewById(R.id.mFloatingActionButton) as FloatingActionButton
+        val mFloatingActionButton =
+            view.findViewById(R.id.mFloatingActionButton) as FloatingActionButton
         mFloatingActionButton.setOnClickListener {
             PublicChatsDialog().show(fragmentManager!!, null)
         }
@@ -82,7 +82,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mGoogleMap.isMyLocationEnabled = true
 //        mGoogleMap.uiSettings.setAllGesturesEnabled(false)
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(sLatLng.latitude, sLatLng.longitude), 15.0F))
+        mGoogleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(
+                    sLatLng.latitude,
+                    sLatLng.longitude
+                ), 15.0F
+            )
+        )
         setMyUniversity(13.7337910, 100.4911897)
         setMyUniversity(13.5228417, 100.7525409)
         setPeopleLocation()
@@ -96,7 +103,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 val tvStatus = view.findViewById(R.id.mTvStatus) as TextView
                 val tvLocation = view.findViewById(R.id.mTvLocation) as TextView
 
-                val infoWindowData = marker.tag as UserItem
+                val infoWindowData = marker.tag as Users
                 //name
                 tvName.text = infoWindowData.name
 
@@ -115,7 +122,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     }
 
                     //location
-                    val list = Geocoder(sContext).getFromLocation(infoWindowData.latitude, infoWindowData.longitude, 1)
+                    val list = Geocoder(sContext).getFromLocation(
+                        infoWindowData.latitude,
+                        infoWindowData.longitude,
+                        1
+                    )
                     val locality = if (list[0].locality != null) {
                         list[0].locality
                     } else {
@@ -145,24 +156,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 .title("DRU")
                 .snippet("Dhonburi rajabhat university")
         )
-        marker.tag = UserItem("DRU", "DRU", "Dhonburi rajabhat university", "", "", latitude, longitude)
+        marker.tag =
+            Users("DRU", "DRU", "Dhonburi rajabhat university", "", "", latitude, longitude)
     }
 
     private fun setPeopleLocation() {
-        FirebaseDatabase.getInstance().getReference("Users").addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                mUserItem.clear()
-                for (snapshot in dataSnapshot.children) {
-                    val user = snapshot.getValue(UserItem::class.java)!!
-                    if (user.latitude != 0.0 && user.longitude != 0.0) {
-                        mUserItem.add(user)
-                    }
-                }
-
-                People(mGoogleMap, mUserItem, mUser.uid)
-            }
+        viewModel.getUsers().observe(this, Observer {
+            mUserItem = it as ArrayList<Users>
+            People(mGoogleMap, mUserItem, viewModel.currentUserId()!!)
         })
     }
 

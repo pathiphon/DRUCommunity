@@ -1,120 +1,72 @@
 package com.comsci.druchat.dialog
 
-import android.app.Dialog
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
+import com.adedom.library.extension.*
 import com.comsci.druchat.LoginActivity
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.comsci.druchat.util.BaseDialogFragment
 
-class ChangePasswordDialog : DialogFragment() {
+class ChangePasswordDialog : BaseDialogFragment(
+    { R.layout.dialog_change_password },
+    { R.drawable.ic_settings_black },
+    { R.string.change_password }
+) {
 
-    private lateinit var mUser: FirebaseUser
-    private lateinit var mEdtOldPassword: EditText
-    private lateinit var mEdtNewPassword: EditText
-    private lateinit var mEdtRePassword: EditText
-    private lateinit var mBtnChangePassword: Button
+    private lateinit var mEtOldPassword: EditText
+    private lateinit var mEtNewPassword: EditText
+    private lateinit var mEtRePassword: EditText
+    private lateinit var mBtChangePassword: Button
     private lateinit var mProgressBar: ProgressBar
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = activity!!.layoutInflater.inflate(R.layout.dialog_change_password, null)
-
-        val builder = AlertDialog.Builder(activity!!)
-            .setView(view)
-            .setTitle(R.string.change_password)
-            .setIcon(R.drawable.ic_settings_black)
-
-        mUser = FirebaseAuth.getInstance().currentUser!!
-
-        bindWidgets(view)
-        setEvents()
-
-        return builder.create()
-    }
-
-    private fun bindWidgets(view: View) {
-        mEdtOldPassword = view.findViewById(R.id.mEdtOldPassword) as EditText
-        mEdtNewPassword = view.findViewById(R.id.mEdtNewPassword) as EditText
-        mEdtRePassword = view.findViewById(R.id.mEdtRePassword) as EditText
-        mBtnChangePassword = view.findViewById(R.id.mBtnChangePassword) as Button
+    override fun initDialog(view: View) {
+        super.initDialog(view)
+        mEtOldPassword = view.findViewById(R.id.mEdtOldPassword) as EditText
+        mEtNewPassword = view.findViewById(R.id.mEdtNewPassword) as EditText
+        mEtRePassword = view.findViewById(R.id.mEdtRePassword) as EditText
+        mBtChangePassword = view.findViewById(R.id.mBtnChangePassword) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
-    }
 
-    private fun setEvents() = mBtnChangePassword.setOnClickListener { changePassword() }
+        mBtChangePassword.setOnClickListener { changePassword() }
+    }
 
     private fun changePassword() {
-        val oldPassword = mEdtOldPassword.text.toString().trim()
-        val newPassword = mEdtNewPassword.text.toString().trim()
-        val rePassword = mEdtRePassword.text.toString().trim()
+        val oldPassword = mEtOldPassword.getContent()
+        val newPassword = mEtNewPassword.getContent()
 
         when {
-            oldPassword.isEmpty() -> {
-                mEdtOldPassword.error = "Please enter Old password"
-                mEdtOldPassword.requestFocus()
-                return
-            }
-            newPassword.isEmpty() -> {
-                mEdtNewPassword.error = "Please enter Password"
-                mEdtNewPassword.requestFocus()
-                return
-            }
-            rePassword.isEmpty() -> {
-                mEdtRePassword.error = "Please enter Re-password"
-                mEdtRePassword.requestFocus()
-                return
-            }
-            newPassword.length < 8 -> {
-                mEdtNewPassword.error = "Minimum length of password should be 8"
-                mEdtNewPassword.requestFocus()
-                return
-            }
-            newPassword != rePassword -> {
-                mEdtRePassword.error = "Passwords do not match"
-                mEdtRePassword.requestFocus()
-                return
-            }
+            mEtOldPassword.isEmpty(getString(R.string.enter_old_password)) -> return
+            mEtNewPassword.isEmpty(getString(R.string.enter_new_password)) -> return
+            mEtRePassword.isEmpty(getString(R.string.enter_re_password)) -> return
+            mEtNewPassword.isLength(8, getString(R.string.enter_length_password_8)) -> return
+            mEtNewPassword.isMatching(mEtOldPassword, getString(R.string.enter_not_match)) -> return
         }
 
         mProgressBar.visibility = View.VISIBLE
         dialog!!.setCanceledOnTouchOutside(false)
-        mEdtOldPassword.isEnabled = false
-        mEdtNewPassword.isEnabled = false
-        mEdtRePassword.isEnabled = false
-        mBtnChangePassword.isEnabled = false
+        mEtOldPassword.isEnabled = false
+        mEtNewPassword.isEnabled = false
+        mEtRePassword.isEnabled = false
+        mBtChangePassword.isEnabled = false
 
-        val credential = EmailAuthProvider.getCredential(mUser.email!!, oldPassword)
-        mUser.reauthenticate(credential).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                mUser.updatePassword(newPassword).addOnCompleteListener { task ->
-                    dialog!!.dismiss()
-                    mProgressBar.visibility = View.GONE
-                    if (task.isSuccessful) {
-                        FirebaseAuth.getInstance().signOut()
-                        activity!!.finish()
-                        startActivity(
-                            Intent(MainActivity.sContext, LoginActivity::class.java)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        )
-                    } else {
-                        Toast.makeText(MainActivity.sContext, task.exception!!.message, Toast.LENGTH_LONG).show()
-                    }
-                }
-            } else {
-                dialog!!.dismiss()
-                mProgressBar.visibility = View.GONE
-                Toast.makeText(MainActivity.sContext, task.exception!!.message, Toast.LENGTH_LONG).show()
-            }
-        }
+        viewModel.firebaseUpdatePassword(oldPassword, newPassword, {
+            mProgressBar.visibility = View.GONE
+            dialog!!.dismiss()
+            viewModel.firebaseAuth().signOut()
+            activity!!.finish()
+            startActivity(
+                Intent(MainActivity.sContext, LoginActivity::class.java)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        }, {
+            mProgressBar.visibility = View.GONE
+            dialog!!.dismiss()
+            MainActivity.sContext.toast(it)
+        })
     }
 
 }

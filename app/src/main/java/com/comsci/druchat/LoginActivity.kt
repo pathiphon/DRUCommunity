@@ -7,15 +7,19 @@ import android.provider.Settings
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
+import com.adedom.library.extension.toast
+import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.dialog.ForgotPasswordDialog
-import com.comsci.druchat.dialog.InsertUserDialog
-import com.comsci.druchat.utility.MyCode
-import com.google.firebase.auth.FirebaseAuth
+import com.comsci.druchat.dialog.RegisterUserDialog
+import com.comsci.druchat.util.MyCode
 import com.luseen.simplepermission.permissions.Permission
 import com.luseen.simplepermission.permissions.PermissionActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : PermissionActivity() {
+
+    private lateinit var viewModel: BaseViewModel
 
     companion object {
         lateinit var mContext: Context
@@ -24,6 +28,8 @@ class LoginActivity : PermissionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         mContext = baseContext
 
@@ -57,8 +63,13 @@ class LoginActivity : PermissionActivity() {
     //endregion
 
     private fun setEvents() {
-        mTvForgotPassword.setOnClickListener { ForgotPasswordDialog().show(supportFragmentManager, null) }
-        mBtnReg.setOnClickListener { InsertUserDialog().show(supportFragmentManager, null) }
+        mTvForgotPassword.setOnClickListener {
+            ForgotPasswordDialog().show(
+                supportFragmentManager,
+                null
+            )
+        }
+        mBtnReg.setOnClickListener { RegisterUserDialog().show(supportFragmentManager, null) }
         mBtnLogin.setOnClickListener { login() }
     }
 
@@ -66,22 +77,22 @@ class LoginActivity : PermissionActivity() {
         val email = mEdtEmail.text.toString().trim()
         val password = mEdtPassword.text.toString().trim()
 
+        mProgressBar.visibility = View.VISIBLE
+
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(baseContext, "All filed are required", Toast.LENGTH_LONG).show()
+            baseContext.toast(R.string.filed_required, Toast.LENGTH_LONG)
         } else {
-            mProgressBar.visibility = View.VISIBLE
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+            viewModel.firebaseSignInWithEmailAndPassword(email, password, {
                 mProgressBar.visibility = View.INVISIBLE
-                if (task.isSuccessful) {
-                    startActivity(
-                        Intent(baseContext, MainActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    )
-                    finish()
-                } else {
-                    Toast.makeText(baseContext, task.exception!!.message, Toast.LENGTH_LONG).show()
-                }
-            }
+                finish()
+                startActivity(
+                    Intent(baseContext, MainActivity::class.java)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                )
+            }, {
+                mProgressBar.visibility = View.INVISIBLE
+                baseContext.toast(it, Toast.LENGTH_LONG)
+            })
         }
     }
 }

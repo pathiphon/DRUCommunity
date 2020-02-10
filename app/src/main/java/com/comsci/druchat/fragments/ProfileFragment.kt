@@ -10,28 +10,27 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.adedom.library.extension.dialogNegative
+import com.adedom.library.extension.failed
 import com.adedom.library.extension.loadCircle
+import com.adedom.library.extension.toast
 import com.comsci.druchat.LoginActivity
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
+import com.comsci.druchat.data.models.Users
+import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.dialog.ChangeEmailDialog
 import com.comsci.druchat.dialog.ChangePasswordDialog
-import com.comsci.druchat.model.UserItem
-import com.comsci.druchat.utility.MyCode
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.*
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.theartofdev.edmodo.cropper.CropImage
 
 class ProfileFragment : Fragment() {
 
+    private lateinit var viewModel: BaseViewModel
+
     private var mImageUri: Uri? = null
-    private lateinit var mUserItem: UserItem
-    private lateinit var mUser: FirebaseUser
-    private lateinit var mDatabaseUser: DatabaseReference
-    private lateinit var mStorage: StorageReference
+    private lateinit var mUserItem: Users
     private lateinit var mImgProfile: ImageView
     private lateinit var mEdtName: EditText
     private lateinit var mEdtStatus: EditText
@@ -47,35 +46,15 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
-        mUser = FirebaseAuth.getInstance().currentUser!!
 
-        bindWidgets(view)
-        setWidgets()
-        setEvents()
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
-        mStorage = FirebaseStorage.getInstance().getReference("profile")
-        mDatabaseUser = FirebaseDatabase.getInstance().getReference("Users")
-        feedProfile()
+        init(view)
 
         return view
     }
 
-    private fun feedProfile() {
-        mDatabaseUser.child(mUser.uid).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val name = dataSnapshot.child("name").value.toString()
-
-                mUserItem = dataSnapshot.getValue(UserItem::class.java)!!
-                mEdtName.setText(mUserItem.name)
-                mEdtStatus.setText(mUserItem.status)
-                if (mUserItem.imageURL != "default") mImgProfile.loadCircle(mUserItem.imageURL)
-            }
-        })
-    }
-
-    private fun bindWidgets(view: View) {
+    private fun init(view: View) {
         mImgProfile = view.findViewById(R.id.mImgProfile) as ImageView
         mEdtName = view.findViewById(R.id.mEdtName) as EditText
         mEdtStatus = view.findViewById(R.id.mEdtStatus) as EditText
@@ -85,48 +64,46 @@ class ProfileFragment : Fragment() {
         mBtnChangePassword = view.findViewById(R.id.mBtnChangePassword) as Button
         mBtnLogout = view.findViewById(R.id.mBtnLogout) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
-    }
 
-    private fun setWidgets() {
-        if (mUser.isEmailVerified) {
+        if (viewModel.currentUser()!!.isEmailVerified) {
             mBtnChangeEmail.isEnabled = false
             mTvVerification.isEnabled = false
-            mTvVerification.text = "verification completed"
+            mTvVerification.text = getString(R.string.verification_completed)
         } else {
-            mTvVerification.text = "verification not completed (Click to Verify)"
+            mTvVerification.text = getString(R.string.verification_not_completed)
             mTvVerification.error = ""
         }
-    }
 
-    private fun setEvents() {
+        viewModel.getUser().observe(this, Observer {
+            mUserItem = it
+            mEdtName.setText(mUserItem.name)
+            mEdtStatus.setText(mUserItem.status)
+            if (mUserItem.imageURL != "default") mImgProfile.loadCircle(mUserItem.imageURL)
+        })
+
         mImgProfile.setOnClickListener { selectImage() }
         mBtnSave.setOnClickListener { saveProfile() }
         mTvVerification.setOnClickListener { setVerification() }
         mBtnChangeEmail.setOnClickListener {
-            if (!mUser.isEmailVerified) {
+            if (!viewModel.currentUser()!!.isEmailVerified)
                 ChangeEmailDialog().show(activity!!.supportFragmentManager, null)
-            }
         }
         mBtnChangePassword.setOnClickListener {
-            ChangePasswordDialog().show(
-                activity!!.supportFragmentManager,
-                null
-            )
+            ChangePasswordDialog().show(activity!!.supportFragmentManager, null)
         }
         mBtnLogout.setOnClickListener { logout() }
     }
 
     private fun setVerification() {
-        mUser.sendEmailVerification().addOnCompleteListener { task ->
+        viewModel.currentUser()!!.sendEmailVerification().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                FirebaseAuth.getInstance().signOut()
+                viewModel.firebaseAuth().signOut()
                 activity!!.finish()
                 startActivity(
                     Intent(MainActivity.sContext, LoginActivity::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 )
-                Toast.makeText(MainActivity.sContext, "Please check your email", Toast.LENGTH_LONG)
-                    .show()
+                MainActivity.sContext.toast(R.string.check_email, Toast.LENGTH_LONG)
             }
         }
     }
@@ -148,7 +125,7 @@ class ProfileFragment : Fragment() {
                 mImageUri = result.uri
                 mImgProfile.loadCircle(mImageUri.toString())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(MainActivity.sContext, "${result.error}", Toast.LENGTH_LONG).show()
+                MainActivity.sContext.toast("${result.error}", Toast.LENGTH_LONG)
             }
         }
     }
@@ -174,7 +151,7 @@ class ProfileFragment : Fragment() {
                         updateProfile()
                     }
                     mImageUri != null -> {
-                        val storage = mStorage.child("${System.currentTimeMillis()}.jpg")
+                        val storage = viewModel.storageProfile().child("${System.currentTimeMillis()}.jpg")
                         val uploadTask = storage.putFile(mImageUri!!)
                         uploadTask.continueWithTask { task ->
                             if (!task.isSuccessful) {
@@ -187,16 +164,11 @@ class ProfileFragment : Fragment() {
                                 updateProfile(task.result.toString())
                             } else {
                                 mProgressBar.visibility = View.INVISIBLE
-                                Toast.makeText(MainActivity.sContext, "Failed!", Toast.LENGTH_LONG)
-                                    .show()
+                                MainActivity.sContext.failed()
                             }
                         }.addOnFailureListener { exception ->
                             mProgressBar.visibility = View.INVISIBLE
-                            Toast.makeText(
-                                MainActivity.sContext,
-                                "${exception.message}",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            MainActivity.sContext.toast(exception.message!!, Toast.LENGTH_LONG)
                         }
                     }
                 }
@@ -204,36 +176,38 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateProfile(image: String = mUserItem.imageURL) {
-        val hashMap = HashMap<String, Any>()
-        hashMap["name"] = mEdtName.text.toString()
-        hashMap["status"] = mEdtStatus.text.toString()
-        hashMap["imageURL"] = image
-        mDatabaseUser.child(mUser.uid).updateChildren(hashMap).addOnCompleteListener { task ->
-            mProgressBar.visibility = View.INVISIBLE
-            if (task.isSuccessful) {
-                feedProfile()
-                mImageUri = null
-                Toast.makeText(MainActivity.sContext, "Profile update complete", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+//        val hashMap = HashMap<String, Any>()
+//        hashMap["name"] = mEdtName.text.toString()
+//        hashMap["status"] = mEdtStatus.text.toString()
+//        hashMap["imageURL"] = image
+//        mDatabaseUser.child(viewModel.currentUser().uid).updateChildren(hashMap)
+//            .addOnCompleteListener { task ->
+//                mProgressBar.visibility = View.INVISIBLE
+//                if (task.isSuccessful) {
+//                    feedProfile()
+//                    mImageUri = null
+//                    Toast.makeText(
+//                        MainActivity.sContext,
+//                        "Profile update complete",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
     }
 
     private fun logout() {
-        val build = AlertDialog.Builder(activity!!)
-        build.setTitle(R.string.logout)
-            .setMessage("Do you want to log out?")
-            .setIcon(R.drawable.ic_exit_to_app_black)
-            .setPositiveButton(R.string.no) { dialogInterface, i ->
-                dialogInterface.dismiss()
-            }.setNegativeButton(R.string.yes) { dialogInterface, i ->
-                MyCode.setState(mDatabaseUser, mUser.uid, "offline")
-                FirebaseAuth.getInstance().signOut()
-                activity!!.finish()
-                startActivity(
-                    Intent(MainActivity.sContext, LoginActivity::class.java)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                )
-            }.show()
+        AlertDialog.Builder(activity!!).dialogNegative(
+            R.string.logout,
+            R.string.logout_messages,
+            R.drawable.ic_exit_to_app_black
+        ) {
+            viewModel.setState("offline")
+            viewModel.firebaseAuth().signOut()
+            activity!!.finish()
+            startActivity(
+                Intent(MainActivity.sContext, LoginActivity::class.java)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        }
     }
 }

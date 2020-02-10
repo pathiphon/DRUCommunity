@@ -1,4 +1,4 @@
-package com.comsci.druchat.utility
+package com.comsci.druchat.util
 
 enum class MySwitch {
     ON,

@@ -1,9 +1,8 @@
-package com.comsci.druchat.utility
+package com.comsci.druchat.util
 
 import android.content.Context
 import android.location.LocationManager
 import android.provider.Settings
-import com.google.firebase.database.DatabaseReference
 
 class MyCode {
 
@@ -14,10 +13,6 @@ class MyCode {
                 contentResolver,
                 LocationManager.GPS_PROVIDER
             )
-        }
-
-        fun setState(databaseReference: DatabaseReference, user_id: String, state: String) {
-            databaseReference.child(user_id).child("state").setValue(state)
         }
 
     }

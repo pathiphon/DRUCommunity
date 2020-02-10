@@ -11,13 +11,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.exitApplication
-import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.fragments.*
-import com.comsci.druchat.utility.MyCode
+import com.comsci.druchat.util.BaseActivity
+import com.comsci.druchat.util.MyCode
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -27,15 +25,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(),
+class MainActivity : BaseActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
     LocationListener {
 
     val TAG = "MainActivity"
-    private lateinit var viewModel: BaseViewModel
-
     private lateinit var mLocationSwitchStateReceiver: BroadcastReceiver
 
     private lateinit var mGoogleApiClient: GoogleApiClient
@@ -49,8 +45,6 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         sContext = baseContext
 
@@ -176,7 +170,6 @@ class MainActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
         locationListener(true)
-        viewModel.setState("online")
         if (mGoogleApiClient.isConnected) {
             startLocationUpdate()
         }
@@ -185,7 +178,6 @@ class MainActivity : AppCompatActivity(),
     override fun onPause() {
         super.onPause()
         locationListener(false)
-        viewModel.setState("offline")
     }
 
     override fun onBackPressed() = this.exitApplication()

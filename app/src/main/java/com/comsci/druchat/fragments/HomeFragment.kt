@@ -13,24 +13,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import com.adedom.library.extension.dialogNegative
-import com.adedom.library.extension.loadCircle
-import com.adedom.library.extension.recyclerVertical
-import com.adedom.library.extension.textChanged
+import com.adedom.library.extension.*
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Follows
 import com.comsci.druchat.data.viewmodel.BaseViewModel
-import com.comsci.druchat.utility.extension.dialogPositive
 
 class HomeFragment : Fragment() {
 
-    val TAG = "HomeFragment"
     private lateinit var viewModel: BaseViewModel
     private lateinit var mAdapter: FollowAdapter
 
-    //    private var TYPE_FEED = "follow"
     private lateinit var mImgProfile: ImageView
     private lateinit var mTvName: TextView
     private lateinit var mTvStatus: TextView

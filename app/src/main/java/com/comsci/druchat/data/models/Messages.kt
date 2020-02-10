@@ -1,6 +1,6 @@
-package com.comsci.druchat.model
+package com.comsci.druchat.data.models
 
-data class ChatsItem(
+data class Messages(
     val sender: String = "",
     val receiver: String = "",
     val message: String = "",
