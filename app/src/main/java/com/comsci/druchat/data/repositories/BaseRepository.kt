@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.adedom.library.extension.addListenerForSingleValueEvent
 import com.adedom.library.extension.addValueEventListener
-import com.comsci.druchat.data.models.ChatLists
-import com.comsci.druchat.data.models.Follows
+import com.comsci.druchat.data.models.ChatList
+import com.comsci.druchat.data.models.Follow
 import com.comsci.druchat.data.models.Messages
-import com.comsci.druchat.data.models.Users
+import com.comsci.druchat.data.models.User
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 
 class BaseRepository {
 
@@ -33,25 +32,25 @@ class BaseRepository {
     private val mChats = firebaseDatabase.getReference("Chats")
     private val mChatList = firebaseDatabase.getReference("ChatList")
 
-    var storageProfile = firebaseStorage.getReference("profile")
-    var storageImage = firebaseStorage.getReference("image")
+    private var storageProfile = firebaseStorage.getReference("profile")
+    private var storageImage = firebaseStorage.getReference("image")
 
     private lateinit var mReadListener: ValueEventListener
 
-    fun getUser(uId: String): LiveData<Users> {
-        val liveData = MutableLiveData<Users>()
+    fun getUser(uId: String): LiveData<User> {
+        val liveData = MutableLiveData<User>()
         mUsers.child(uId).addValueEventListener {
-            liveData.value = it.getValue(Users::class.java)
+            liveData.value = it.getValue(User::class.java)
         }
         return liveData
     }
 
-    fun getUsers(): LiveData<List<Users>> {
-        val liveData = MutableLiveData<List<Users>>()
+    fun getUsers(): LiveData<List<User>> {
+        val liveData = MutableLiveData<List<User>>()
         mUsers.addValueEventListener {
-            val items = arrayListOf<Users>()
+            val items = arrayListOf<User>()
             for (snapshot in it.children) {
-                val item = snapshot.getValue(Users::class.java)
+                val item = snapshot.getValue(User::class.java)
                 items.add(item!!)
             }
             liveData.value = items
@@ -59,13 +58,13 @@ class BaseRepository {
         return liveData
     }
 
-    fun getSearch(name: String): LiveData<List<Users>> {
-        val liveData = MutableLiveData<List<Users>>()
+    fun getSearch(name: String): LiveData<List<User>> {
+        val liveData = MutableLiveData<List<User>>()
         mUsers.orderByChild("name").startAt(name).endAt(name + "\uf8ff")
             .addListenerForSingleValueEvent {
-                val items = arrayListOf<Users>()
+                val items = arrayListOf<User>()
                 for (snapshot in it.children) {
-                    val item = snapshot.getValue(Users::class.java)
+                    val item = snapshot.getValue(User::class.java)
                     if (currentUserId != item!!.user_id) {
                         items.add(item)
                         liveData.value = items
@@ -75,17 +74,17 @@ class BaseRepository {
         return liveData
     }
 
-    fun getFollows(): LiveData<List<Users>> {
-        val liveData = MutableLiveData<List<Users>>()
+    fun getFollows(): LiveData<List<User>> {
+        val liveData = MutableLiveData<List<User>>()
         mFollow.child(currentUserId!!).addValueEventListener { dataSnapshot ->
-            val items = arrayListOf<Users>()
+            val items = arrayListOf<User>()
 
             for (snapshot in dataSnapshot.children) {
-                val follow = snapshot.getValue(Follows::class.java)
+                val follow = snapshot.getValue(Follow::class.java)
 
                 if (follow!!.type == "follow") {
                     mUsers.child(follow.user_id).addListenerForSingleValueEvent {
-                        val item = it.getValue(Users::class.java)
+                        val item = it.getValue(User::class.java)
                         items.add(item!!)
                         liveData.value = items
                     }
@@ -96,22 +95,22 @@ class BaseRepository {
         return liveData
     }
 
-    fun getChatListUsers(): LiveData<List<Users>> {
-        val liveData = MutableLiveData<List<Users>>()
+    fun getChatListUsers(): LiveData<List<User>> {
+        val liveData = MutableLiveData<List<User>>()
         mChatList.child(currentUserId!!).addValueEventListener { dataSnapshot ->
-            val chatList = arrayListOf<ChatLists>()
+            val chatList = arrayListOf<ChatList>()
             for (snapshot in dataSnapshot.children) {
-                val item = snapshot.getValue(ChatLists::class.java)!!
+                val item = snapshot.getValue(ChatList::class.java)!!
                 chatList.add(item)
             }
 
-            chatList.sortWith(compareBy(ChatLists::key))
+            chatList.sortWith(compareBy(ChatList::key))
             chatList.reverse()
 
-            val chatListUsers = arrayListOf<Users>()
+            val chatListUsers = arrayListOf<User>()
             for (item in chatList) {
                 mUsers.child(item.user_id).addListenerForSingleValueEvent {
-                    val user = it.getValue(Users::class.java)
+                    val user = it.getValue(User::class.java)
                     chatListUsers.add(user!!)
                     liveData.value = chatListUsers
                 }
@@ -146,7 +145,7 @@ class BaseRepository {
         mUsers.child(currentUserId!!).child("state").setValue(state)
     }
 
-    fun setFollow(followId: String, friend: Follows) {
+    fun setFollow(followId: String, friend: Follow) {
         mFollow.child(currentUserId!!).child(followId).setValue(friend)
     }
 
@@ -157,9 +156,9 @@ class BaseRepository {
                 onComplete?.invoke()
 
                 mChatList.child(currentUserId!!).child(otherId)
-                    .setValue(ChatLists(key, otherId))
+                    .setValue(ChatList(key, otherId))
                 mChatList.child(otherId).child(currentUserId)
-                    .setValue(ChatLists(key, currentUserId))
+                    .setValue(ChatList(key, currentUserId))
             }
         }
     }
@@ -185,10 +184,30 @@ class BaseRepository {
         imgUrl: String = "default",
         onComplete: () -> Unit
     ) {
-        val user = Users(currentUserId!!, name, imageURL = imgUrl)
+        val user = User(currentUserId!!, name, imageURL = imgUrl)
         mUsers.child(currentUserId).setValue(user).addOnCompleteListener { task ->
             if (task.isSuccessful)
                 onComplete.invoke()
+        }
+    }
+
+    fun updateProfile(
+        name: String,
+        status: String,
+        imageUrl: String,
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
+    ) {
+        val hashMap = HashMap<String, Any>()
+        hashMap["name"] = name
+        hashMap["status"] = status
+        hashMap["imageURL"] = imageUrl
+        mUsers.child(currentUserId!!).updateChildren(hashMap).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onComplete.invoke()
+            } else {
+                onFailed.invoke(task.exception!!.message!!)
+            }
         }
     }
 
@@ -284,12 +303,13 @@ class BaseRepository {
     }
 
     fun firebaseUploadImage(
-        storageReference: StorageReference,
+        profile: Boolean,
         uri: Uri,
         imgUrl: (String) -> Unit,
         onFailed: (String) -> Unit
     ) {
-        val storage = storageReference.child("${System.currentTimeMillis()}.jpg")
+        val storage = if (profile) storageProfile else storageImage
+        storage.child("${System.currentTimeMillis()}.jpg")
         val uploadTask = storage.putFile(uri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {

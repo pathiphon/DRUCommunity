@@ -1,60 +1,38 @@
 package com.comsci.druchat.fragments
 
 import android.content.Intent
-import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
-import com.comsci.druchat.data.models.Users
-import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.data.models.User
+import com.comsci.druchat.util.BaseFragment
 
-class ChatsFragment : Fragment() {
+class ChatsFragment : BaseFragment({ R.layout.fragment_chats }) {
 
-    val TAG = "MyTag"
-
-    private lateinit var viewModel: BaseViewModel
-
-    private lateinit var mUserItem: ArrayList<Users>
+    private lateinit var mUserItem: ArrayList<User>
     private lateinit var mRecyclerView: RecyclerView
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+    override fun initFragment(view: View) {
+        super.initFragment(view)
+        mUserItem = ArrayList<User>()
 
-        val view = inflater.inflate(R.layout.fragment_chats, container, false)
-
-        init(view)
-
-        mUserItem = arrayListOf<Users>()
-
-        return view
-    }
-
-    private fun init(view: View) {
         mRecyclerView = view.findViewById(R.id.mRecyclerView) as RecyclerView
         mRecyclerView.layoutManager = LinearLayoutManager(MainActivity.sContext)
 
         //todo count no read
         viewModel.getChatListUsers().observe(this, Observer {
-            Log.d(TAG, ">>${it}")
-            mUserItem = it as ArrayList<Users>
+            mUserItem = it as ArrayList<User>
             mRecyclerView.adapter = CustomAdapter()
         })
-
     }
 
     inner class CustomAdapter : RecyclerView.Adapter<CustomHolder>() {

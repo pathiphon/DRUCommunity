@@ -90,7 +90,7 @@ class RegisterUserDialog : BaseDialogFragment(
                     )
                 })
             } else {
-                viewModel.firebaseUploadImage(viewModel.storageProfile(), mImageUri!!, {
+                viewModel.firebaseUploadImage(true, mImageUri!!, {
                     viewModel.insertUser(name, it) {
                         mProgressBar.visibility = View.INVISIBLE
 

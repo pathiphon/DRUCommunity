@@ -6,15 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.R
-import com.comsci.druchat.data.models.Users
+import com.comsci.druchat.data.models.User
 import kotlinx.android.synthetic.main.item_user.view.*
 
 class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
 
-    private var items = arrayListOf<Users>()
-    var follow: ((Users) -> Unit)? = null
-    var unfollow: ((Users) -> Unit)? = null
-    var chat: ((Users) -> Unit)? = null
+    private var items = arrayListOf<User>()
+    var follow: ((User) -> Unit)? = null
+    var unfollow: ((User) -> Unit)? = null
+    var chat: ((User) -> Unit)? = null
     var typeList = "follow"
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): FollowHolder {
@@ -38,9 +38,9 @@ class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
         }
     }
 
-    fun setList(items: List<Users>) {
-        this.items = items as ArrayList<Users>
-        this.items.sortWith(compareBy(Users::name))
+    fun setList(items: List<User>) {
+        this.items = items as ArrayList<User>
+        this.items.sortWith(compareBy(User::name))
         notifyDataSetChanged()
     }
 

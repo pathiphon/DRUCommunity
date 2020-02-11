@@ -150,7 +150,7 @@ class MessageActivity : BaseActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 mProgressBar.visibility = View.VISIBLE
                 val imageUri = result.uri
-                viewModel.firebaseUploadImage(viewModel.storageImage(), imageUri, { url ->
+                viewModel.firebaseUploadImage(false, imageUri, { url ->
                     mProgressBar.visibility = View.INVISIBLE
 
                     val dateTime = SimpleDateFormat("EEE, dd MMM yy HH:mm", Locale.ENGLISH)

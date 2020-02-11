@@ -10,16 +10,14 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.loadImage
 import com.comsci.druchat.MainActivity.Companion.sContext
 import com.comsci.druchat.MainActivity.Companion.sLatLng
 import com.comsci.druchat.R
-import com.comsci.druchat.data.models.Users
-import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.data.models.User
 import com.comsci.druchat.dialog.PublicChatsDialog
+import com.comsci.druchat.util.BaseFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -30,11 +28,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MapsFragment : Fragment(), OnMapReadyCallback {
+class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallback {
 
-    private lateinit var viewModel: BaseViewModel
-
-    private lateinit var mUserItem: ArrayList<Users>
+    private lateinit var mUserItem: ArrayList<User>
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mMapView: MapView
 
@@ -46,8 +42,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
-
         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (!viewModel.currentUser()!!.isEmailVerified) {
@@ -56,24 +50,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 .replace(R.id.mFrameLayout, ProfileFragment()).commit()
         }
 
-        mUserItem = arrayListOf<Users>()
+        mUserItem = arrayListOf<User>()
 
-        val view = inflater.inflate(R.layout.fragment_maps, container, false)
-        mMapView = view.findViewById(R.id.mMapView)
+        mMapView = v.findViewById(R.id.mMapView)
         mMapView.onCreate(savedInstanceState)
         mMapView.getMapAsync(this)
 
-        initChat(view)
-
-        return view
-    }
-
-    private fun initChat(view: View) {
-        val mFloatingActionButton =
-            view.findViewById(R.id.mFloatingActionButton) as FloatingActionButton
-        mFloatingActionButton.setOnClickListener {
+        v.findViewById<FloatingActionButton>(R.id.mFloatingActionButton).setOnClickListener {
             PublicChatsDialog().show(fragmentManager!!, null)
         }
+
+        return v
     }
 
     @SuppressLint("MissingPermission")
@@ -103,7 +90,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 val tvStatus = view.findViewById(R.id.mTvStatus) as TextView
                 val tvLocation = view.findViewById(R.id.mTvLocation) as TextView
 
-                val infoWindowData = marker.tag as Users
+                val infoWindowData = marker.tag as User
                 //name
                 tvName.text = infoWindowData.name
 
@@ -157,12 +144,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 .snippet("Dhonburi rajabhat university")
         )
         marker.tag =
-            Users("DRU", "DRU", "Dhonburi rajabhat university", "", "", latitude, longitude)
+            User("DRU", "DRU", "Dhonburi rajabhat university", "", "", latitude, longitude)
     }
 
     private fun setPeopleLocation() {
         viewModel.getUsers().observe(this, Observer {
-            mUserItem = it as ArrayList<Users>
+            mUserItem = it as ArrayList<User>
             People(mGoogleMap, mUserItem, viewModel.currentUserId()!!)
         })
     }

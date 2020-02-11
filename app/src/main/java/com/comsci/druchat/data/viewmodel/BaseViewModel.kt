@@ -2,10 +2,9 @@ package com.comsci.druchat.data.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.comsci.druchat.data.models.Follows
+import com.comsci.druchat.data.models.Follow
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.data.repositories.BaseRepository
-import com.google.firebase.storage.StorageReference
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 
@@ -14,10 +13,6 @@ class BaseViewModel : ViewModel() {
     private val repo = BaseRepository()
 
     fun firebaseAuth() = repo.firebaseAuth
-
-    fun storageProfile() = repo.storageProfile
-
-    fun storageImage() = repo.storageImage
 
     fun currentUser() = repo.currentUser
 
@@ -39,7 +34,7 @@ class BaseViewModel : ViewModel() {
 
     fun setState(state: String) = repo.setState(state)
 
-    fun setFollow(followId: String, friend: Follows) = repo.setFollow(followId, friend)
+    fun setFollow(followId: String, friend: Follow) = repo.setFollow(followId, friend)
 
     fun setMessages(otherId: String, messages: Messages, onComplete: (() -> Unit)? = null) =
         repo.setMessages(otherId, messages, onComplete)
@@ -50,6 +45,14 @@ class BaseViewModel : ViewModel() {
 
     fun insertUser(name: String, imgUrl: String = "default", onComplete: () -> Unit) =
         repo.insertUser(name, imgUrl, onComplete)
+
+    fun updateProfile(
+        name: String,
+        status: String,
+        imageUrl: String,
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
+    ) = repo.updateProfile(name, status, imageUrl, onComplete, onFailed)
 
     fun firebaseUpdateEmail(
         oldPassword: String,
@@ -86,11 +89,11 @@ class BaseViewModel : ViewModel() {
     ) = repo.firebaseSignInWithEmailAndPassword(email, password, onComplete, onFailed)
 
     fun firebaseUploadImage(
-        storageReference: StorageReference,
+        profile: Boolean,
         uri: Uri,
         imgUrl: (String) -> Unit,
         onFailed: (String) -> Unit
-    ) = repo.firebaseUploadImage(storageReference, uri, imgUrl, onFailed)
+    ) = repo.firebaseUploadImage(profile, uri, imgUrl, onFailed)
 
     fun selectImage(profile: Boolean): CropImage.ActivityBuilder {
         return if (profile) {

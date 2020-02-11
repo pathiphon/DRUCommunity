@@ -1,6 +1,6 @@
 package com.comsci.druchat.data.models
 
-data class Users(
+data class User(
     val user_id: String = "",
     val name: String = "",
     val status: String = "",

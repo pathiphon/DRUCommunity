@@ -1,52 +1,31 @@
 package com.comsci.druchat.fragments
 
 import android.content.Intent
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.adedom.library.extension.*
 import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
-import com.comsci.druchat.data.models.Follows
-import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.data.models.Follow
+import com.comsci.druchat.util.BaseFragment
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment({R.layout.fragment_home}) {
 
-    private lateinit var viewModel: BaseViewModel
     private lateinit var mAdapter: FollowAdapter
 
-    private lateinit var mImgProfile: ImageView
+    private lateinit var mIvProfile: ImageView
     private lateinit var mTvName: TextView
     private lateinit var mTvStatus: TextView
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
-
-        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
-
-        init(view)
-
-        fetchProfile()
-        fetchFollow()
-
-        return view
-    }
-
-    private fun init(view: View) {
-        mImgProfile = view.findViewById(R.id.mImgProfile) as ImageView
+    override fun initFragment(view: View) {
+        super.initFragment(view)
+        mIvProfile = view.findViewById(R.id.mImgProfile) as ImageView
         mTvName = view.findViewById(R.id.mTvName) as TextView
         mTvStatus = view.findViewById(R.id.mTvStatus) as TextView
         val etSearch = view.findViewById(R.id.mEtSearch) as EditText
@@ -81,11 +60,14 @@ class HomeFragment : Fragment() {
         etSearch.textChanged {
             if (it.isEmpty()) fetchFollow() else fetchSearch(it)
         }
+
+        fetchProfile()
+        fetchFollow()
     }
 
     private fun fetchProfile() {
         viewModel.getUser().observe(this, Observer {
-            if (it.imageURL != "default") mImgProfile.loadCircle(it.imageURL)
+            if (it.imageURL != "default") mIvProfile.loadCircle(it.imageURL)
             mTvName.text = it.name
             mTvStatus.text = it.status
         })
@@ -106,7 +88,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateFollow(userId: String, type: String) {
-        val friend = Follows(userId, type)
+        val friend = Follow(userId, type)
         viewModel.setFollow(userId, friend)
     }
 }

@@ -57,5 +57,7 @@
     <string name="check_your_email">Please check your Email</string>
     <string name="already_registered">You are already registered</string>
     <string name="filed_required">All filed are required</string>
+    <string name="edit_profile">Do you want to edit the profile?</string>
+    <string name="profile_update_complete">Profile update complete</string>
 
 </resources>
