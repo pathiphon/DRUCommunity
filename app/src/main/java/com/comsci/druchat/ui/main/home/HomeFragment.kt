@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -18,7 +19,7 @@ import com.comsci.druchat.ui.main.MainActivity
 import com.comsci.druchat.ui.messages.MessageActivity
 import com.comsci.druchat.util.*
 
-class HomeFragment : BaseFragment<BaseViewModel>({R.layout.fragment_home}) {
+class HomeFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_home }) {
 
     private lateinit var mAdapter: FollowAdapter
 
@@ -49,8 +50,11 @@ class HomeFragment : BaseFragment<BaseViewModel>({R.layout.fragment_home}) {
         }
 
         mAdapter.unfollow = {
-            //            "Do you want to cancel follow ${mUserItem[adapterPosition].name} ?"
-            AlertDialog.Builder(activity!!).dialogNegative(R.string.un_follow_friend) {
+            AlertDialog.Builder(activity!!).dialogNegative(
+                R.string.un_follow_friend,
+                "Do you want to cancel follow ${it.name} ?",
+                R.drawable.ic_remove_black
+            ) {
                 updateFollow(it.user_id, KEY_UN_FOLLOW)
             }
         }
@@ -94,6 +98,8 @@ class HomeFragment : BaseFragment<BaseViewModel>({R.layout.fragment_home}) {
 
     private fun updateFollow(userId: String, type: String) {
         val friend = Follow(userId, type)
-        viewModel.setFollow(userId, friend)
+        viewModel.setFollow(userId, friend) {
+            MainActivity.sContext.toast(it, Toast.LENGTH_LONG)
+        }
     }
 }

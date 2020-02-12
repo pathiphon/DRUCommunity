@@ -4,15 +4,16 @@ import com.adedom.library.extension.loadBitmap
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
 import com.comsci.druchat.ui.main.MainActivity
-import com.comsci.druchat.ui.main.map.MapsFragment.Companion.mMarkerPeople
 import com.comsci.druchat.util.KEY_DEFAULT
+import com.comsci.druchat.util.KEY_OFFLINE
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 
-class People(googleMap: GoogleMap, users: ArrayList<User>, user_id: String) {
+class People(
+    private val googleMap: GoogleMap,
+    private val mMarkerPeople: ArrayList<Marker>,
+    users: ArrayList<User>
+) {
 
     init {
         for (marker in mMarkerPeople) {
@@ -21,23 +22,21 @@ class People(googleMap: GoogleMap, users: ArrayList<User>, user_id: String) {
         mMarkerPeople.clear()
 
         for (user in users) {
+            if (user.state == KEY_OFFLINE) continue
+            val icUser = BitmapDescriptorFactory.fromResource(R.drawable.ic_user)
             if (user.imageURL == KEY_DEFAULT) {
-                setMarker(googleMap, user, BitmapDescriptorFactory.fromResource(R.drawable.ic_user))
+                setMarker(user, icUser)
             } else {
                 MainActivity.sContext.loadBitmap(user.imageURL, {
-                    setMarker(googleMap, user, BitmapDescriptorFactory.fromBitmap(it))
+                    setMarker(user, BitmapDescriptorFactory.fromBitmap(it))
                 }, {
-                    setMarker(
-                        googleMap,
-                        user,
-                        BitmapDescriptorFactory.fromResource(R.drawable.ic_user)
-                    )
+                    setMarker(user, icUser)
                 })
             }
         }
     }
 
-    private fun setMarker(googleMap: GoogleMap, user: User, icon: BitmapDescriptor) {
+    private fun setMarker(user: User, icon: BitmapDescriptor) {
         val marker = googleMap.addMarker(
             MarkerOptions()
                 .position(LatLng(user.latitude, user.longitude))

@@ -27,10 +27,10 @@ class ChatsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_chats }) {
         mAdapter = ChatAdapter()
         mRecyclerView.recyclerVertical { it.adapter = mAdapter }
 
-        mAdapter.onClick = {
+        mAdapter.onItemClick = {
             startActivity(
                 Intent(MainActivity.sContext, MessageActivity::class.java)
-                    .putExtra(KEY_USER_ID, it)
+                    .putExtra(KEY_USER_ID, it.user_id)
             )
         }
 

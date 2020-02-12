@@ -12,9 +12,7 @@ import com.adedom.library.extension.loadImage
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.util.MessagesType
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import com.comsci.druchat.util.extension.getDateTime
 
 class MessagesAdapter(private val userId: String) :
     RecyclerView.Adapter<MessagesAdapter.MessagesHolder>() {
@@ -39,34 +37,32 @@ class MessagesAdapter(private val userId: String) :
         // message
         holder.mTvMessage.text = chat.message
 
-        //time
-        holder.mTvTime.text = getDateTime(false, chat.dateTime)
+        // time
+        holder.mTvTime.text = false.getDateTime(chat.dateTime)
 
-        //date
-        if (position > 0 && getDateTime(true, chat.dateTime) ==
-            getDateTime(true, items[position - 1].dateTime)
+        // date
+        if (position > 0 && true.getDateTime(chat.dateTime) ==
+            true.getDateTime(items[position - 1].dateTime)
         ) {
             holder.mTvDate.visibility = View.GONE
         } else {
-            holder.mTvDate.text = getDateTime(true, chat.dateTime)
+            holder.mTvDate.text = true.getDateTime(chat.dateTime)
         }
 
         //read
-        if (chat.isread) {
-            holder.mTvRead.visibility = View.VISIBLE
-        }
+        if (chat.isread) holder.mTvRead.visibility = View.VISIBLE
 
         //image
         if (chat.message.isEmpty()) {
             holder.mTvMessage.visibility = View.GONE
-            holder.mImgImage.visibility = View.VISIBLE
-            holder.mImgImage.loadBitmap(chat.image, {
-                if (it.width > it.height) holder.mImgImage.layoutParams.height = 300
-                holder.mImgImage.loadImage(chat.image)
+            holder.mIvImage.visibility = View.VISIBLE
+            holder.mIvImage.loadBitmap(chat.image, {
+                if (it.width > it.height) holder.mIvImage.layoutParams.height = 300
+                holder.mIvImage.loadImage(chat.image)
             })
         }
 
-        //location
+        // location
         val context = holder.itemView.context
         if (position > 0 && context.getLocality(chat.latitude, chat.longitude) ==
             context.getLocality(items[position - 1].latitude, items[position - 1].longitude)
@@ -74,14 +70,6 @@ class MessagesAdapter(private val userId: String) :
             holder.mTvLocation.visibility = View.GONE
         } else {
             holder.mTvLocation.text = context.getLocality(chat.latitude, chat.longitude)
-        }
-    }
-
-    private fun getDateTime(date: Boolean, dateTime: Long): String {
-        return if (date) {
-            SimpleDateFormat("EEE, dd MMM yy", Locale.ENGLISH).format(dateTime)
-        } else {
-            SimpleDateFormat("HH:mm", Locale.ENGLISH).format(dateTime)
         }
     }
 
@@ -100,7 +88,7 @@ class MessagesAdapter(private val userId: String) :
     }
 
     inner class MessagesHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mImgImage: ImageView = itemView.findViewById(R.id.mIvImage)
+        val mIvImage: ImageView = itemView.findViewById(R.id.mIvImage)
         val mTvMessage: TextView = itemView.findViewById(R.id.mTvMessage)
         val mTvRead: TextView = itemView.findViewById(R.id.mTvRead)
         val mTvTime: TextView = itemView.findViewById(R.id.mTvTime)

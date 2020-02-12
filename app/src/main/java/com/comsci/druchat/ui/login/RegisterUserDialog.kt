@@ -88,17 +88,17 @@ class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
                         Intent(LoginActivity.mContext, MainActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     )
-                })
+                }, onFailed = { LoginActivity.mContext.toast(it) })
             } else {
-                viewModel.firebaseUploadImage(true, viewModel.imageUri!!, {
-                    viewModel.insertUser(name, it) {
+                viewModel.firebaseUploadImage(true, viewModel.imageUri!!, { url ->
+                    viewModel.insertUser(name, url, {
                         mProgressBar.visibility = View.INVISIBLE
 
                         startActivity(
                             Intent(LoginActivity.mContext, MainActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         )
-                    }
+                    }, { LoginActivity.mContext.toast(it) })
                 }, { LoginActivity.mContext.toast(it, Toast.LENGTH_LONG) })
             }
         }, {

@@ -151,7 +151,7 @@ class ProfileFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_profile 
             R.string.logout_messages,
             R.drawable.ic_exit_to_app_black
         ) {
-            viewModel.setState(KEY_OFFLINE)
+            viewModel.setState(KEY_OFFLINE) { MainActivity.sContext.toast(it, Toast.LENGTH_LONG) }
             viewModel.firebaseAuth().signOut()
             activity!!.finish()
             startActivity(

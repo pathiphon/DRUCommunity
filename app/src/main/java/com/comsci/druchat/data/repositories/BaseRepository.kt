@@ -137,19 +137,36 @@ class BaseRepository {
         return liveData
     }
 
-    fun setLatlng(hashMap: HashMap<String, Any>) {
-        mUsers.child(currentUserId!!).updateChildren(hashMap)
+    fun setLatlng(hashMap: HashMap<String, Any>, onFailed: (String) -> Unit) {
+        mUsers.child(currentUserId!!).updateChildren(hashMap).addOnCompleteListener {
+            if (!it.isSuccessful) {
+                onFailed.invoke(it.exception!!.message!!)
+            }
+        }
     }
 
-    fun setState(state: String) {
-        mUsers.child(currentUserId!!).child("state").setValue(state)
+    fun setState(state: String, onFailed: (String) -> Unit) {
+        mUsers.child(currentUserId!!).child("state").setValue(state).addOnCompleteListener {
+            if (!it.isSuccessful) {
+                onFailed.invoke(it.exception!!.message!!)
+            }
+        }
     }
 
-    fun setFollow(followId: String, friend: Follow) {
-        mFollow.child(currentUserId!!).child(followId).setValue(friend)
+    fun setFollow(followId: String, friend: Follow, onFailed: (String) -> Unit) {
+        mFollow.child(currentUserId!!).child(followId).setValue(friend).addOnCompleteListener {
+            if (!it.isSuccessful) {
+                onFailed.invoke(it.exception!!.message!!)
+            }
+        }
     }
 
-    fun setMessages(otherId: String, messages: Messages, onComplete: (() -> Unit)? = null) {
+    fun setMessages(
+        otherId: String,
+        messages: Messages,
+        onComplete: (() -> Unit)? = null,
+        onFailed: (String) -> Unit
+    ) {
         val key = mChats.push().key
         mChats.child(key!!).setValue(messages).addOnCompleteListener { t ->
             if (t.isSuccessful) {
@@ -159,6 +176,8 @@ class BaseRepository {
                     .setValue(ChatList(key, otherId))
                 mChatList.child(otherId).child(currentUserId)
                     .setValue(ChatList(key, currentUserId))
+            } else {
+                onFailed.invoke(t.exception!!.message!!)
             }
         }
     }
@@ -182,12 +201,16 @@ class BaseRepository {
     fun insertUser(
         name: String,
         imgUrl: String = "default",
-        onComplete: () -> Unit
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
     ) {
         val user = User(currentUserId!!, name, imageURL = imgUrl)
         mUsers.child(currentUserId).setValue(user).addOnCompleteListener { task ->
-            if (task.isSuccessful)
+            if (task.isSuccessful) {
                 onComplete.invoke()
+            } else {
+                onFailed.invoke(task.exception!!.message!!)
+            }
         }
     }
 

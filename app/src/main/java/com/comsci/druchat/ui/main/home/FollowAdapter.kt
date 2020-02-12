@@ -20,15 +20,13 @@ class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
     var chat: ((User) -> Unit)? = null
     var typeList = KEY_FOLLOW
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): FollowHolder {
-        return FollowHolder(
-            LayoutInflater.from(viewGroup.context).inflate(R.layout.item_user, viewGroup, false)
+    override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): FollowHolder =
+        FollowHolder(
+            LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.item_user, viewGroup, false)
         )
-    }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: FollowHolder, position: Int) {
         val user = items[position]
@@ -36,9 +34,8 @@ class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
         holder.itemView.mTvName.text = user.name
         holder.itemView.mTvStatus.text = user.status
 
-        if (user.state != KEY_OFFLINE) {
+        if (user.state != KEY_OFFLINE)
             holder.itemView.mImgState.setImageResource(R.drawable.shape_state_green)
-        }
     }
 
     fun setList(items: List<User>) {
@@ -56,7 +53,9 @@ class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
                 }
 
                 itemView.setOnClickListener { chat?.invoke(items[adapterPosition]) }
-            } else itemView.setOnClickListener { follow?.invoke(items[adapterPosition]) }
+            } else {
+                itemView.setOnClickListener { follow?.invoke(items[adapterPosition]) }
+            }
         }
     }
 }

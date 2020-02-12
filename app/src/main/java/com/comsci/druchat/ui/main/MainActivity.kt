@@ -6,8 +6,10 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.adedom.library.extension.exitApplication
+import com.adedom.library.extension.toast
 import com.comsci.druchat.R
 import com.comsci.druchat.ui.login.LoginActivity
 import com.comsci.druchat.ui.main.chat.ChatsFragment
@@ -29,8 +31,7 @@ class MainActivity : BaseActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
-    LocationListener
-{
+    LocationListener {
 
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mLocationRequest: LocationRequest
@@ -121,7 +122,7 @@ class MainActivity : BaseActivity(),
         val hashMap = HashMap<String, Any>()
         hashMap["latitude"] = sLatLng.latitude
         hashMap["longitude"] = sLatLng.longitude
-        viewModel.setLatlng(hashMap)
+        viewModel.setLatlng(hashMap) { baseContext.toast(it, Toast.LENGTH_LONG) }
     }
 
     override fun onResume() {

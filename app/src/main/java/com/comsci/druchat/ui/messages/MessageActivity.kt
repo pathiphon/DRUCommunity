@@ -75,7 +75,11 @@ class MessageActivity : BaseActivity() {
                 viewModel.currentUserId()!!, mUserId, messages, KEY_EMPTY, dateTime,
                 MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
             )
-            viewModel.setMessages(mUserId, chat) { mEtSend.setText(KEY_EMPTY) }
+            viewModel.setMessages(mUserId, chat, {
+                mEtSend.setText(KEY_EMPTY)
+            }, {
+                baseContext.toast(it, Toast.LENGTH_LONG)
+            })
         }
     }
 
@@ -93,7 +97,9 @@ class MessageActivity : BaseActivity() {
                         viewModel.currentUserId()!!, mUserId, KEY_EMPTY, url, dateTime,
                         MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
                     )
-                    viewModel.setMessages(mUserId, messages) { mEtSend.setText(KEY_EMPTY) }
+                    viewModel.setMessages(mUserId, messages, onFailed = {
+                        baseContext.toast(it, Toast.LENGTH_LONG)
+                    })
                 }, {
                     mProgressBar.visibility = View.INVISIBLE
                     baseContext.toast(it, Toast.LENGTH_LONG)

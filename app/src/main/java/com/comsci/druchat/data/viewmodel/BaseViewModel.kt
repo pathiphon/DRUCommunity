@@ -31,21 +31,31 @@ class BaseViewModel : ViewModel() {
 
     fun getChats(otherId: String) = repo.getChats(otherId)
 
-    fun setLatlng(hashMap: HashMap<String, Any>) = repo.setLatlng(hashMap)
+    fun setLatlng(hashMap: HashMap<String, Any>, onFailed: (String) -> Unit) =
+        repo.setLatlng(hashMap, onFailed)
 
-    fun setState(state: String) = repo.setState(state)
+    fun setState(state: String, onFailed: (String) -> Unit) = repo.setState(state, onFailed)
 
-    fun setFollow(followId: String, friend: Follow) = repo.setFollow(followId, friend)
+    fun setFollow(followId: String, friend: Follow, onFailed: (String) -> Unit) =
+        repo.setFollow(followId, friend, onFailed)
 
-    fun setMessages(otherId: String, messages: Messages, onComplete: (() -> Unit)? = null) =
-        repo.setMessages(otherId, messages, onComplete)
+    fun setMessages(
+        otherId: String,
+        messages: Messages,
+        onComplete: (() -> Unit)? = null,
+        onFailed: (String) -> Unit
+    ) = repo.setMessages(otherId, messages, onComplete, onFailed)
 
     fun setRead(otherId: String) = repo.setRead(otherId)
 
     fun setRead() = repo.setRead()
 
-    fun insertUser(name: String, imgUrl: String = "default", onComplete: () -> Unit) =
-        repo.insertUser(name, imgUrl, onComplete)
+    fun insertUser(
+        name: String,
+        imgUrl: String = "default",
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
+    ) = repo.insertUser(name, imgUrl, onComplete, onFailed)
 
     fun updateProfile(
         name: String,

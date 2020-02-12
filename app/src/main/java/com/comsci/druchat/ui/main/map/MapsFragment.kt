@@ -34,13 +34,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), OnMapReadyCallback {
 
-    private lateinit var mUserItem: ArrayList<User>
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mMapView: MapView
-
-    companion object {
-        val mMarkerPeople = arrayListOf<Marker>()
-    }
+    private val mMarkerPeople = arrayListOf<Marker>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,20 +50,16 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
         if (!viewModel.currentUser()!!.isEmailVerified) {
             MainActivity.sContext.toast(R.string.click_verify, Toast.LENGTH_LONG)
             activity!!.supportFragmentManager.beginTransaction()
-                .replace(R.id.mFrameLayout,
-                    ProfileFragment()
-                ).commit()
+                .replace(R.id.mFrameLayout, ProfileFragment())
+                .commit()
         }
-
-        mUserItem = arrayListOf<User>()
 
         mMapView = v.findViewById(R.id.mMapView)
         mMapView.onCreate(savedInstanceState)
         mMapView.getMapAsync(this)
 
         v.findViewById<FloatingActionButton>(R.id.mFloatingActionButton).setOnClickListener {
-            PublicChatsDialog()
-                .show(fragmentManager!!, null)
+            PublicChatsDialog().show(fragmentManager!!, null)
         }
 
         return v
@@ -81,10 +73,7 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
 
         mGoogleMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(
-                    sLatLng.latitude,
-                    sLatLng.longitude
-                ), 15.0F
+                LatLng(sLatLng.latitude, sLatLng.longitude), 15.0F
             )
         )
         setMyUniversity(13.7337910, 100.4911897)
@@ -135,9 +124,7 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
                 return view
             }
 
-            override fun getInfoWindow(p0: Marker?): View? {
-                return null
-            }
+            override fun getInfoWindow(p0: Marker?): View? = null
         })
     }
 
@@ -154,12 +141,7 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
 
     private fun setPeopleLocation() {
         viewModel.getUsers().observe(this, Observer {
-            mUserItem = it as ArrayList<User>
-            People(
-                mGoogleMap,
-                mUserItem,
-                viewModel.currentUserId()!!
-            )
+            People(mGoogleMap, mMarkerPeople, it as ArrayList<User>)
         })
     }
 
