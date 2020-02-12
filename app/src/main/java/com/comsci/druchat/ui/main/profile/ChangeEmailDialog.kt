@@ -1,20 +1,22 @@
-package com.comsci.druchat.dialog
+package com.comsci.druchat.ui.main.profile
 
 import android.content.Intent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.getContent
+import com.adedom.library.extension.isEmail
 import com.adedom.library.extension.isEmpty
 import com.adedom.library.extension.toast
-import com.comsci.druchat.LoginActivity
-import com.comsci.druchat.MainActivity
+import com.adedom.library.util.BaseDialogFragment
 import com.comsci.druchat.R
-import com.comsci.druchat.util.BaseDialogFragment
-import com.comsci.druchat.util.extension.isEmail
+import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.ui.login.LoginActivity
+import com.comsci.druchat.ui.main.MainActivity
 
-class ChangeEmailDialog : BaseDialogFragment(
+class ChangeEmailDialog : BaseDialogFragment<BaseViewModel>(
     { R.layout.dialog_change_email },
     { R.drawable.ic_settings_black },
     { R.string.e_mail }
@@ -27,6 +29,8 @@ class ChangeEmailDialog : BaseDialogFragment(
 
     override fun initDialog(view: View) {
         super.initDialog(view)
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         mEtNewEmail = view.findViewById(R.id.mEdtNewEmail) as EditText
         mEtConfirmPassword = view.findViewById(R.id.mEdtConfirmPassword) as EditText
         mBtChangeEmail = view.findViewById(R.id.mBtnChangeEmail) as Button

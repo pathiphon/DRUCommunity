@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         style="@style/RelativeLayoutDialog"
-        tools:context=".dialog.CreateGroupDialog">
+        tools:context=".ui.main.group.CreateGroupDialog">
 
     <LinearLayout style="@style/LinearLayoutVertical">
 

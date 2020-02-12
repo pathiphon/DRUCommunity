@@ -1,4 +1,4 @@
-package com.comsci.druchat.fragments
+package com.comsci.druchat.ui.main.home
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.adedom.library.extension.loadCircle
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
-import com.comsci.druchat.util.KEY_FOLLOW
 import com.comsci.druchat.util.KEY_DEFAULT
+import com.comsci.druchat.util.KEY_FOLLOW
 import com.comsci.druchat.util.KEY_OFFLINE
 import kotlinx.android.synthetic.main.item_user.view.*
 
 class FollowAdapter : RecyclerView.Adapter<FollowAdapter.FollowHolder>() {
 
-    private var items = arrayListOf<User>()
+    private var items = ArrayList<User>()
     var follow: ((User) -> Unit)? = null
     var unfollow: ((User) -> Unit)? = null
     var chat: ((User) -> Unit)? = null

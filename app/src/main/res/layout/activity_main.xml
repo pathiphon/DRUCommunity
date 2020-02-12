@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         style="@style/RelativeLayout"
         android:padding="@dimen/zero"
-        tools:context=".MainActivity">
+        tools:context=".ui.main.MainActivity">
 
     <FrameLayout
             android:id="@+id/mFrameLayout"

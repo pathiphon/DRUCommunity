@@ -21,13 +21,13 @@
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key"/>
 
-        <activity android:name=".MessageActivity"
+        <activity android:name=".ui.messages.MessageActivity"
                   android:screenOrientation="portrait"/>
         <activity
-                android:name=".LoginActivity"
+                android:name=".ui.login.LoginActivity"
                 android:screenOrientation="portrait"/>
         <activity
-                android:name=".MainActivity"
+                android:name=".ui.main.MainActivity"
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

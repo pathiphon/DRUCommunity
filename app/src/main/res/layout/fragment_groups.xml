@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         style="@style/RelativeLayout"
         android:gravity="start"
-        tools:context=".fragments.GroupsFragment">
+        tools:context=".ui.main.group.GroupsFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/mFloatingActionButton"

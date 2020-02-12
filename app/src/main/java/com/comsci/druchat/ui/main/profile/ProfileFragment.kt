@@ -1,4 +1,4 @@
-package com.comsci.druchat.fragments
+package com.comsci.druchat.ui.main.profile
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -7,20 +7,20 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.*
-import com.comsci.druchat.LoginActivity
-import com.comsci.druchat.MainActivity
+import com.adedom.library.util.BaseFragment
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
-import com.comsci.druchat.dialog.ChangeEmailDialog
-import com.comsci.druchat.dialog.ChangePasswordDialog
-import com.comsci.druchat.util.BaseFragment
+import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.ui.login.LoginActivity
+import com.comsci.druchat.ui.main.MainActivity
 import com.comsci.druchat.util.KEY_DEFAULT
 import com.comsci.druchat.util.KEY_EMPTY
 import com.comsci.druchat.util.KEY_OFFLINE
 import com.theartofdev.edmodo.cropper.CropImage
 
-class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
+class ProfileFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_profile }) {
 
     private var mImageUri: Uri? = null
     private lateinit var mUserItem: User
@@ -36,6 +36,8 @@ class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
 
     override fun initFragment(view: View) {
         super.initFragment(view)
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         mIvProfile = view.findViewById(R.id.mImgProfile) as ImageView
         mEtName = view.findViewById(R.id.mEdtName) as EditText
         mEtStatus = view.findViewById(R.id.mEdtStatus) as EditText
@@ -70,7 +72,8 @@ class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
                 ChangeEmailDialog().show(activity!!.supportFragmentManager, null)
         }
         mBtChangePassword.setOnClickListener {
-            ChangePasswordDialog().show(activity!!.supportFragmentManager, null)
+            ChangePasswordDialog()
+                .show(activity!!.supportFragmentManager, null)
         }
         mBtLogout.setOnClickListener { logout() }
     }

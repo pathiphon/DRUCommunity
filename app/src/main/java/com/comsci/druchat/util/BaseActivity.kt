@@ -1,11 +1,11 @@
 package com.comsci.druchat.util
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.adedom.library.util.PathiphonActivity
 import com.comsci.druchat.data.viewmodel.BaseViewModel
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : PathiphonActivity() {
 
     lateinit var viewModel: BaseViewModel
 

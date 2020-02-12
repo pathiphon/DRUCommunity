@@ -1,18 +1,20 @@
-package com.comsci.druchat.dialog
+package com.comsci.druchat.ui.login
 
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.getContent
+import com.adedom.library.extension.isEmail
 import com.adedom.library.extension.isEmpty
 import com.adedom.library.extension.toast
-import com.comsci.druchat.MainActivity
+import com.adedom.library.util.BaseDialogFragment
 import com.comsci.druchat.R
-import com.comsci.druchat.util.BaseDialogFragment
-import com.comsci.druchat.util.extension.isEmail
+import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.ui.main.MainActivity
 
-class ForgotPasswordDialog : BaseDialogFragment(
+class ForgotPasswordDialog : BaseDialogFragment<BaseViewModel>(
     { R.layout.dialog_forgot_password },
     { R.drawable.ic_settings_black },
     { R.string.reset }
@@ -24,6 +26,8 @@ class ForgotPasswordDialog : BaseDialogFragment(
 
     override fun initDialog(view: View) {
         super.initDialog(view)
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         mEtEmail = view.findViewById(R.id.mEdtEmail) as EditText
         mBtReset = view.findViewById(R.id.mBtnReset) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar

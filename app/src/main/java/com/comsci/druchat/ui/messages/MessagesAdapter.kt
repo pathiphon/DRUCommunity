@@ -1,4 +1,4 @@
-package com.comsci.druchat
+package com.comsci.druchat.ui.messages
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.adedom.library.extension.getLocality
 import com.adedom.library.extension.loadBitmap
 import com.adedom.library.extension.loadImage
+import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.util.MessagesType
 

@@ -11,6 +11,7 @@ import com.theartofdev.edmodo.cropper.CropImageView
 class BaseViewModel : ViewModel() {
 
     private val repo = BaseRepository()
+    var imageUri: Uri? = null
 
     fun firebaseAuth() = repo.firebaseAuth
 

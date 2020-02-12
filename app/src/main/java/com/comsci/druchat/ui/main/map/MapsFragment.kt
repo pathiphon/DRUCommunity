@@ -1,4 +1,4 @@
-package com.comsci.druchat.fragments
+package com.comsci.druchat.ui.main.map
 
 import android.annotation.SuppressLint
 import android.location.Geocoder
@@ -11,13 +11,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.loadImage
 import com.adedom.library.extension.toast
-import com.comsci.druchat.MainActivity
-import com.comsci.druchat.MainActivity.Companion.sLatLng
+import com.adedom.library.util.BaseFragment
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
-import com.comsci.druchat.dialog.PublicChatsDialog
+import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.ui.main.MainActivity
+import com.comsci.druchat.ui.main.MainActivity.Companion.sLatLng
+import com.comsci.druchat.ui.main.profile.ProfileFragment
 import com.comsci.druchat.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -29,7 +32,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallback {
+class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), OnMapReadyCallback {
 
     private lateinit var mUserItem: ArrayList<User>
     private lateinit var mGoogleMap: GoogleMap
@@ -44,12 +47,16 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (!viewModel.currentUser()!!.isEmailVerified) {
             MainActivity.sContext.toast(R.string.click_verify, Toast.LENGTH_LONG)
             activity!!.supportFragmentManager.beginTransaction()
-                .replace(R.id.mFrameLayout, ProfileFragment()).commit()
+                .replace(R.id.mFrameLayout,
+                    ProfileFragment()
+                ).commit()
         }
 
         mUserItem = arrayListOf<User>()
@@ -59,7 +66,8 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
         mMapView.getMapAsync(this)
 
         v.findViewById<FloatingActionButton>(R.id.mFloatingActionButton).setOnClickListener {
-            PublicChatsDialog().show(fragmentManager!!, null)
+            PublicChatsDialog()
+                .show(fragmentManager!!, null)
         }
 
         return v
@@ -147,7 +155,11 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
     private fun setPeopleLocation() {
         viewModel.getUsers().observe(this, Observer {
             mUserItem = it as ArrayList<User>
-            People(mGoogleMap, mUserItem, viewModel.currentUserId()!!)
+            People(
+                mGoogleMap,
+                mUserItem,
+                viewModel.currentUserId()!!
+            )
         })
     }
 

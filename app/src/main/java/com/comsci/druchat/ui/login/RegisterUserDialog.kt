@@ -1,25 +1,23 @@
-package com.comsci.druchat.dialog
+package com.comsci.druchat.ui.login
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.widget.*
+import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.*
-import com.comsci.druchat.LoginActivity
-import com.comsci.druchat.MainActivity
+import com.adedom.library.util.BaseDialogFragment
 import com.comsci.druchat.R
-import com.comsci.druchat.util.BaseDialogFragment
-import com.comsci.druchat.util.extension.isEmail
+import com.comsci.druchat.data.viewmodel.BaseViewModel
+import com.comsci.druchat.ui.main.MainActivity
 import com.theartofdev.edmodo.cropper.CropImage
 
-class RegisterUserDialog : BaseDialogFragment(
+class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
     { R.layout.dialog_register_user },
     { R.drawable.ic_user },
     { R.string.register }
 ) {
 
-    private var mImageUri: Uri? = null
     private lateinit var mEtName: EditText
     private lateinit var mEtEmail: EditText
     private lateinit var mEtPassword: EditText
@@ -30,6 +28,8 @@ class RegisterUserDialog : BaseDialogFragment(
 
     override fun initDialog(view: View) {
         super.initDialog(view)
+        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
         mEtName = view.findViewById(R.id.mEdtName) as EditText
         mEtEmail = view.findViewById(R.id.mEdtEmail) as EditText
         mEtPassword = view.findViewById(R.id.mEdtPassword) as EditText
@@ -47,8 +47,8 @@ class RegisterUserDialog : BaseDialogFragment(
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
-                mImageUri = result.uri
-                mIvProfile.loadCircle(mImageUri.toString())
+                viewModel.imageUri = result.uri
+                mIvProfile.loadCircle(viewModel.imageUri.toString())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 MainActivity.sContext.toast(result.error.message!!, Toast.LENGTH_LONG)
             }
@@ -80,7 +80,7 @@ class RegisterUserDialog : BaseDialogFragment(
         mBtReg.isEnabled = false
 
         viewModel.firebaseCreateUserWithEmailAndPassword(email, password, {
-            if (mImageUri == null) {
+            if (viewModel.imageUri == null) {
                 viewModel.insertUser(name, onComplete = {
                     mProgressBar.visibility = View.INVISIBLE
 
@@ -90,7 +90,7 @@ class RegisterUserDialog : BaseDialogFragment(
                     )
                 })
             } else {
-                viewModel.firebaseUploadImage(true, mImageUri!!, {
+                viewModel.firebaseUploadImage(true, viewModel.imageUri!!, {
                     viewModel.insertUser(name, it) {
                         mProgressBar.visibility = View.INVISIBLE
 

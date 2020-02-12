@@ -1,23 +1,20 @@
-package com.comsci.druchat
+package com.comsci.druchat.ui.login
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.adedom.library.extension.toast
+import com.adedom.library.util.PathiphonActivity
+import com.comsci.druchat.R
 import com.comsci.druchat.data.viewmodel.BaseViewModel
-import com.comsci.druchat.dialog.ForgotPasswordDialog
-import com.comsci.druchat.dialog.RegisterUserDialog
-import com.comsci.druchat.util.MyCode
-import com.luseen.simplepermission.permissions.Permission
-import com.luseen.simplepermission.permissions.PermissionActivity
+import com.comsci.druchat.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : PermissionActivity() {
+class LoginActivity : PathiphonActivity() {
 
     private lateinit var viewModel: BaseViewModel
 
@@ -33,43 +30,28 @@ class LoginActivity : PermissionActivity() {
 
         mContext = baseContext
 
-        mLogin.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_in))
+        mLogin.startAnimation(
+            AnimationUtils.loadAnimation(
+                mContext,
+                R.anim.fade_in
+            )
+        )
 
-        setApp()
-        setEvents()
+        init()
+
     }
 
-    //region setApp
-    private fun setApp() {
-        requestPermission(Permission.FINE_LOCATION) { permissionGranted, isPermissionDeniedForever ->
-            if (!permissionGranted) {
-                Toast.makeText(mContext, "Please grant permission", Toast.LENGTH_LONG).show()
-                finishAffinity()
-            }
-        }
-
-        if (!MyCode.locationSetting(mContext)) {
-            startActivityForResult(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1234)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (!MyCode.locationSetting(mContext) && requestCode == 1234) {
-            Toast.makeText(mContext, "Please grant location", Toast.LENGTH_LONG).show()
-            finishAffinity()
-        }
-    }
-    //endregion
-
-    private fun setEvents() {
+    private fun init() {
         mTvForgotPassword.setOnClickListener {
             ForgotPasswordDialog().show(
                 supportFragmentManager,
                 null
             )
         }
-        mBtnReg.setOnClickListener { RegisterUserDialog().show(supportFragmentManager, null) }
+        mBtnReg.setOnClickListener {
+            RegisterUserDialog()
+                .show(supportFragmentManager, null)
+        }
         mBtnLogin.setOnClickListener { login() }
     }
 

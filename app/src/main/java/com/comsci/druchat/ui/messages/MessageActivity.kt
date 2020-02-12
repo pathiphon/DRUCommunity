@@ -1,22 +1,18 @@
-package com.comsci.druchat
+package com.comsci.druchat.ui.messages
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.location.LocationManager
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.adedom.library.extension.loadCircle
+import com.adedom.library.extension.recyclerVertical
 import com.adedom.library.extension.toast
+import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Messages
-import com.comsci.druchat.util.BaseActivity
-import com.comsci.druchat.util.MyCode
-import com.comsci.druchat.util.extension.recyclerViewChats
+import com.comsci.druchat.ui.main.MainActivity
+import com.comsci.druchat.util.*
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.android.synthetic.main.template_chats.*
@@ -28,16 +24,11 @@ class MessageActivity : BaseActivity() {
     private lateinit var mUserId: String
     private lateinit var mAdapter: MessagesAdapter
 
-    private lateinit var mLocationSwitchStateReceiver: BroadcastReceiver
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
 
-        mUserId = intent.getStringExtra("user_id")!!
-
-        locationListener()
-        locationSetting()
+        mUserId = intent.getStringExtra(KEY_USER_ID)!!
 
         init()
 
@@ -46,14 +37,15 @@ class MessageActivity : BaseActivity() {
     }
 
     private fun init() {
-        mAdapter = MessagesAdapter(viewModel.currentUserId()!!)
-        mRecyclerView.recyclerViewChats { it.adapter = mAdapter }
+        mAdapter =
+            MessagesAdapter(viewModel.currentUserId()!!)
+        mRecyclerView.recyclerVertical(true) { it.adapter = mAdapter }
 
         viewModel.getUser(mUserId).observe(this, Observer {
-            if (it.imageURL != "default") mImgProfile.loadCircle(it.imageURL)
+            if (it.imageURL != KEY_DEFAULT) mImgProfile.loadCircle(it.imageURL)
             mTvName.text = it.name
             mTvStatus.text = it.status
-            if (it.state != "offline") {
+            if (it.state != KEY_OFFLINE) {
                 mImgState.setImageResource(R.drawable.shape_state_green)
             }
         })
@@ -68,54 +60,13 @@ class MessageActivity : BaseActivity() {
         })
     }
 
-    //region setApp
-    private fun locationListener() {
-        mLocationSwitchStateReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                if (LocationManager.PROVIDERS_CHANGED_ACTION == intent.action) {
-                    val locationManager =
-                        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                    val isGpsEnabled =
-                        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) //NETWORK_PROVIDER
-
-                    if (!isGpsEnabled) {
-                        locationSetting()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun locationListener(boolean: Boolean) {
-        if (boolean) {
-            val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-            filter.addAction(Intent.ACTION_PROVIDER_CHANGED)
-            registerReceiver(mLocationSwitchStateReceiver, filter)
-        } else {
-            unregisterReceiver(mLocationSwitchStateReceiver)
-        }
-    }
-
-    private fun locationSetting() {
-        if (!MyCode.locationSetting(baseContext)) {
-            startActivityForResult(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1234)
-        }
-    }
-
-    //endregion
-
     override fun onResume() {
         super.onResume()
-        locationListener(true)
-
         viewModel.setRead(mUserId)
-
     }
 
     override fun onPause() {
         super.onPause()
-        locationListener(false)
-
         viewModel.setRead()
     }
 
@@ -131,19 +82,13 @@ class MessageActivity : BaseActivity() {
                 MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
             )
             viewModel.setMessages(mUserId, chat) {
-                mEdtSend.setText("")
+                mEdtSend.setText(KEY_EMPTY)
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //set app
-        if (!MyCode.locationSetting(baseContext) && requestCode == 1234) {
-            baseContext.toast(R.string.please_grant_location, Toast.LENGTH_LONG)
-            finishAffinity()
-        }
-
         //select image
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
@@ -156,7 +101,7 @@ class MessageActivity : BaseActivity() {
                     val dateTime = SimpleDateFormat("EEE, dd MMM yy HH:mm", Locale.ENGLISH)
                         .format(Calendar.getInstance().time)
                     val messages = Messages(
-                        viewModel.currentUserId()!!, mUserId, "", url, dateTime,
+                        viewModel.currentUserId()!!, mUserId, KEY_EMPTY, url, dateTime,
                         MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
                     )
                     viewModel.setMessages(mUserId, messages)
@@ -165,7 +110,7 @@ class MessageActivity : BaseActivity() {
                     baseContext.toast(it, Toast.LENGTH_LONG)
                 })
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                baseContext.toast("${result.error}", Toast.LENGTH_LONG)
+                baseContext.toast(result.error.message!!, Toast.LENGTH_LONG)
             }
         }
     }

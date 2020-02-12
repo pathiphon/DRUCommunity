@@ -46,16 +46,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
-    //image cropper
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-
-    //Permissions
-    implementation 'com.github.armcha:SimplePermissions:1.0.0'
-
     //lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0"
 
-    implementation 'com.github.pathiphon:Dom:0.2.9'
+    //image cropper
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
+    // library
+    implementation 'com.github.pathiphon:Dom:0.3.2'
 }

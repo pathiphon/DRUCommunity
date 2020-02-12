@@ -1,10 +1,10 @@
-package com.comsci.druchat.fragments
+package com.comsci.druchat.ui.main.map
 
 import com.adedom.library.extension.loadBitmap
-import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
-import com.comsci.druchat.fragments.MapsFragment.Companion.mMarkerPeople
+import com.comsci.druchat.ui.main.MainActivity
+import com.comsci.druchat.ui.main.map.MapsFragment.Companion.mMarkerPeople
 import com.comsci.druchat.util.KEY_DEFAULT
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
