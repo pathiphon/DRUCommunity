@@ -16,8 +16,6 @@ import com.comsci.druchat.util.*
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.android.synthetic.main.template_chats.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class MessageActivity : BaseActivity() {
 
@@ -28,8 +26,6 @@ class MessageActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
 
-        mUserId = intent.getStringExtra(KEY_USER_ID)!!
-
         init()
 
         fetchChats()
@@ -37,8 +33,9 @@ class MessageActivity : BaseActivity() {
     }
 
     private fun init() {
-        mAdapter =
-            MessagesAdapter(viewModel.currentUserId()!!)
+        mUserId = intent.getStringExtra(KEY_USER_ID)!!
+
+        mAdapter = MessagesAdapter(viewModel.currentUserId()!!)
         mRecyclerView.recyclerVertical(true) { it.adapter = mAdapter }
 
         viewModel.getUser(mUserId).observe(this, Observer {
@@ -50,8 +47,8 @@ class MessageActivity : BaseActivity() {
             }
         })
 
-        mImgSend.setOnClickListener { sendMessage() }
-        mImgImage.setOnClickListener { viewModel.selectImage(false).start(this) }
+        mIvSend.setOnClickListener { sendMessage() }
+        mIvImage.setOnClickListener { viewModel.selectImage(false).start(this) }
     }
 
     private fun fetchChats() {
@@ -71,25 +68,19 @@ class MessageActivity : BaseActivity() {
     }
 
     private fun sendMessage() {
-        val message = mEdtSend.text.toString().trim()
-        if (message.isNotEmpty()) {
-            val dateTime = SimpleDateFormat("EEE, dd MMM yy HH:mm", Locale.ENGLISH)
-                .format(Calendar.getInstance().time)
-//            val dateTime = ServerValue.TIMESTAMP
-
+        val messages = mEtSend.text.toString().trim()
+        if (messages.isNotEmpty()) {
+            val dateTime = System.currentTimeMillis()
             val chat = Messages(
-                viewModel.currentUserId()!!, mUserId, message, "", dateTime,
+                viewModel.currentUserId()!!, mUserId, messages, KEY_EMPTY, dateTime,
                 MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
             )
-            viewModel.setMessages(mUserId, chat) {
-                mEdtSend.setText(KEY_EMPTY)
-            }
+            viewModel.setMessages(mUserId, chat) { mEtSend.setText(KEY_EMPTY) }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //select image
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
@@ -97,14 +88,12 @@ class MessageActivity : BaseActivity() {
                 val imageUri = result.uri
                 viewModel.firebaseUploadImage(false, imageUri, { url ->
                     mProgressBar.visibility = View.INVISIBLE
-
-                    val dateTime = SimpleDateFormat("EEE, dd MMM yy HH:mm", Locale.ENGLISH)
-                        .format(Calendar.getInstance().time)
+                    val dateTime = System.currentTimeMillis()
                     val messages = Messages(
                         viewModel.currentUserId()!!, mUserId, KEY_EMPTY, url, dateTime,
                         MainActivity.sLatLng.latitude, MainActivity.sLatLng.longitude
                     )
-                    viewModel.setMessages(mUserId, messages)
+                    viewModel.setMessages(mUserId, messages) { mEtSend.setText(KEY_EMPTY) }
                 }, {
                     mProgressBar.visibility = View.INVISIBLE
                     baseContext.toast(it, Toast.LENGTH_LONG)

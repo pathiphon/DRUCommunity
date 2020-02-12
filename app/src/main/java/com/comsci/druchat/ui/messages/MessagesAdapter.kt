@@ -12,8 +12,11 @@ import com.adedom.library.extension.loadImage
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.util.MessagesType
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-class MessagesAdapter( private val userId: String) :
+class MessagesAdapter(private val userId: String) :
     RecyclerView.Adapter<MessagesAdapter.MessagesHolder>() {
 
     private var items = ArrayList<Messages>()
@@ -37,15 +40,15 @@ class MessagesAdapter( private val userId: String) :
         holder.mTvMessage.text = chat.message
 
         //time
-        holder.mTvTime.text = datetimeFormat("time", chat.dateTime)
+        holder.mTvTime.text = getDateTime(false, chat.dateTime)
 
         //date
-        if (position > 0 && datetimeFormat("date", chat.dateTime) ==
-            datetimeFormat("date", items[position - 1].dateTime)
+        if (position > 0 && getDateTime(true, chat.dateTime) ==
+            getDateTime(true, items[position - 1].dateTime)
         ) {
             holder.mTvDate.visibility = View.GONE
         } else {
-            holder.mTvDate.text = datetimeFormat("date", chat.dateTime)
+            holder.mTvDate.text = getDateTime(true, chat.dateTime)
         }
 
         //read
@@ -74,12 +77,11 @@ class MessagesAdapter( private val userId: String) :
         }
     }
 
-    private fun datetimeFormat(format: String, dateTime: String): String {
-//        "EEE, dd MMM yy HH:mm"
-        return if (format == "date") {
-            dateTime.substring(0, 15).trim()
+    private fun getDateTime(date: Boolean, dateTime: Long): String {
+        return if (date) {
+            SimpleDateFormat("EEE, dd MMM yy", Locale.ENGLISH).format(dateTime)
         } else {
-            dateTime.substring(15, dateTime.length).trim()
+            SimpleDateFormat("HH:mm", Locale.ENGLISH).format(dateTime)
         }
     }
 
@@ -98,7 +100,7 @@ class MessagesAdapter( private val userId: String) :
     }
 
     inner class MessagesHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mImgImage: ImageView = itemView.findViewById(R.id.mImgImage)
+        val mImgImage: ImageView = itemView.findViewById(R.id.mIvImage)
         val mTvMessage: TextView = itemView.findViewById(R.id.mTvMessage)
         val mTvRead: TextView = itemView.findViewById(R.id.mTvRead)
         val mTvTime: TextView = itemView.findViewById(R.id.mTvTime)

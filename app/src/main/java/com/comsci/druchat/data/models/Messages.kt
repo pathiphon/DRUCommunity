@@ -5,7 +5,7 @@ data class Messages(
     val receiver: String = "",
     val message: String = "",
     val image: String = "",
-    val dateTime: String = "",
+    val dateTime: Long = 0L,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val isread: Boolean = false

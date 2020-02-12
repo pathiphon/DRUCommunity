@@ -18,13 +18,13 @@
             android:layout_alignParentBottom="true">
 
         <ImageView
-                android:id="@+id/mImgImage"
+                android:id="@+id/mIvImage"
                 android:layout_width="@dimen/image_icon_message"
                 android:layout_height="@dimen/image_icon_message"
                 android:src="@drawable/ic_image_black" />
 
         <EditText
-                android:id="@+id/mEdtSend"
+                android:id="@+id/mEtSend"
                 style="@style/EditText"
                 android:layout_width="0dp"
                 android:layout_marginLeft="@dimen/five"
@@ -34,7 +34,7 @@
                 android:maxLines="5" />
 
         <ImageView
-                android:id="@+id/mImgSend"
+                android:id="@+id/mIvSend"
                 android:layout_width="@dimen/image_icon_message"
                 android:layout_height="@dimen/image_icon_message"
                 android:src="@drawable/ic_send_black" />

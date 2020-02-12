@@ -27,9 +27,9 @@ class PublicChatsDialog : BaseDialogFragment<BaseViewModel>(
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         mRecyclerView = view.findViewById(R.id.mRecyclerView) as RecyclerView
-        mIvImage = view.findViewById(R.id.mImgImage) as ImageView
-        mEtSend = view.findViewById(R.id.mEdtSend) as EditText
-        mIvSend = view.findViewById(R.id.mImgSend) as ImageView
+        mIvImage = view.findViewById(R.id.mIvImage) as ImageView
+        mEtSend = view.findViewById(R.id.mEtSend) as EditText
+        mIvSend = view.findViewById(R.id.mIvSend) as ImageView
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
     }
 

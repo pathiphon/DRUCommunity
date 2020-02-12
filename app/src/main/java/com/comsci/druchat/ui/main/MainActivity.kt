@@ -29,7 +29,8 @@ class MainActivity : BaseActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
     GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
-    LocationListener {
+    LocationListener
+{
 
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var mLocationRequest: LocationRequest
@@ -56,24 +57,51 @@ class MainActivity : BaseActivity(),
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(this)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.mFrameLayout,
-                HomeFragment()
-            )
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.mFrameLayout, HomeFragment())
                 .commit()
         }
+
+        setMapAndLocation()
+
     }
 
-    override fun onConnected(p0: Bundle?) {
-        startLocationUpdate()
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        var fragment: Fragment? = null
+
+        when (item.itemId) {
+            R.id.nav_home -> fragment = HomeFragment()
+            R.id.nav_chats -> fragment = ChatsFragment()
+            R.id.nav_groups -> fragment = GroupsFragment()
+            R.id.nav_map -> fragment = MapsFragment()
+            R.id.nav_profile -> fragment = ProfileFragment()
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mFrameLayout, fragment!!)
+            .commit()
+        return true
     }
 
-    override fun onConnectionSuspended(p0: Int) {
+    private fun setMapAndLocation() {
+        mGoogleApiClient = GoogleApiClient.Builder(this)
+            .addApi(LocationServices.API)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .build()
         mGoogleApiClient.connect()
+
+        mLocationRequest = LocationRequest()
+            .setInterval(10000)
+            .setFastestInterval(10000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
     }
 
-    override fun onConnectionFailed(p0: ConnectionResult) {
-    }
+    override fun onConnected(p0: Bundle?) = startLocationUpdate()
+
+    override fun onConnectionSuspended(p0: Int) = mGoogleApiClient.connect()
+
+    override fun onConnectionFailed(p0: ConnectionResult) {}
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdate() {
@@ -87,27 +115,6 @@ class MainActivity : BaseActivity(),
     private fun stopLocationUpdate() = LocationServices.FusedLocationApi
         .removeLocationUpdates(mGoogleApiClient, this)
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        var selectedFragment: Fragment? = null
-
-        when (item.itemId) {
-            R.id.nav_home -> selectedFragment =
-                HomeFragment()
-            R.id.nav_chats -> selectedFragment =
-                ChatsFragment()
-            R.id.nav_groups -> selectedFragment =
-                GroupsFragment()
-            R.id.nav_map -> selectedFragment =
-                MapsFragment()
-            R.id.nav_profile -> selectedFragment =
-                ProfileFragment()
-        }
-
-        supportFragmentManager.beginTransaction().replace(R.id.mFrameLayout, selectedFragment!!)
-            .commit()
-        return true
-    }
-
     override fun onLocationChanged(location: Location) {
         sLatLng = LatLng(location.latitude, location.longitude)
 
@@ -119,9 +126,7 @@ class MainActivity : BaseActivity(),
 
     override fun onResume() {
         super.onResume()
-        if (mGoogleApiClient.isConnected) {
-            startLocationUpdate()
-        }
+        if (mGoogleApiClient.isConnected) startLocationUpdate()
     }
 
     override fun onPause() {
