@@ -18,9 +18,9 @@ abstract class BaseFragment(private val recource: () -> Int) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        v = inflater.inflate(recource.invoke(), container, false)
-
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+
+        v = inflater.inflate(recource.invoke(), container, false)
 
         initFragment(v)
 

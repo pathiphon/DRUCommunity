@@ -12,12 +12,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.adedom.library.extension.loadImage
-import com.comsci.druchat.MainActivity.Companion.sContext
+import com.adedom.library.extension.toast
+import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MainActivity.Companion.sLatLng
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
 import com.comsci.druchat.dialog.PublicChatsDialog
-import com.comsci.druchat.util.BaseFragment
+import com.comsci.druchat.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -42,10 +43,11 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (!viewModel.currentUser()!!.isEmailVerified) {
-            Toast.makeText(sContext, "Click to Verify", Toast.LENGTH_LONG).show()
+            MainActivity.sContext.toast(R.string.click_verify, Toast.LENGTH_LONG)
             activity!!.supportFragmentManager.beginTransaction()
                 .replace(R.id.mFrameLayout, ProfileFragment()).commit()
         }
@@ -97,32 +99,28 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
                 //status
                 tvStatus.text = infoWindowData.status
 
-                if (infoWindowData.user_id == "DRU") {
+                if (infoWindowData.user_id == KEY_DRU) {
                     //dru
                     imgProfile.visibility = View.GONE
                     tvLocation.visibility = View.GONE
                     imgState.visibility = View.GONE
                 } else {
                     //image
-                    if (infoWindowData.imageURL != "default") {
+                    if (infoWindowData.imageURL != KEY_DEFAULT) {
                         imgProfile.loadImage(infoWindowData.imageURL)
                     }
 
                     //location
-                    val list = Geocoder(sContext).getFromLocation(
+                    val list = Geocoder(MainActivity.sContext).getFromLocation(
                         infoWindowData.latitude,
                         infoWindowData.longitude,
                         1
                     )
-                    val locality = if (list[0].locality != null) {
-                        list[0].locality
-                    } else {
-                        "unknown"
-                    }
+                    val locality = if (list[0].locality != null) list[0].locality else KEY_UNKNOWN
                     tvLocation.text = locality
 
                     //state
-                    if (infoWindowData.state != "offline") {
+                    if (infoWindowData.state != KEY_OFFLINE) {
                         imgState.setImageResource(R.drawable.shape_state_green)
                     }
                 }
@@ -140,11 +138,10 @@ class MapsFragment : BaseFragment({ R.layout.fragment_maps }), OnMapReadyCallbac
             MarkerOptions()
                 .position(LatLng(latitude, longitude))
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.dru_logo))
-                .title("DRU")
-                .snippet("Dhonburi rajabhat university")
+                .title(KEY_DRU)
+                .snippet(KEY_DRU_FULL)
         )
-        marker.tag =
-            User("DRU", "DRU", "Dhonburi rajabhat university", "", "", latitude, longitude)
+        marker.tag = User(KEY_DRU, KEY_DRU, KEY_DRU_FULL, KEY_EMPTY, KEY_EMPTY, latitude, longitude)
     }
 
     private fun setPeopleLocation() {

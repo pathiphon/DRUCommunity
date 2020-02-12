@@ -15,6 +15,8 @@ import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
 import com.comsci.druchat.util.BaseFragment
+import com.comsci.druchat.util.KEY_DEFAULT
+import com.comsci.druchat.util.KEY_USER_ID
 
 class ChatsFragment : BaseFragment({ R.layout.fragment_chats }) {
 
@@ -46,7 +48,7 @@ class ChatsFragment : BaseFragment({ R.layout.fragment_chats }) {
 
         override fun onBindViewHolder(holder: CustomHolder, position: Int) {
             val user = mUserItem[position]
-            if (user.imageURL != "default") holder.mImgProfile.loadCircle(user.imageURL)
+            if (user.imageURL != KEY_DEFAULT) holder.mImgProfile.loadCircle(user.imageURL)
             holder.mTvName.text = user.name
 
 //            holder.mTvCount.text = count.toString()
@@ -64,7 +66,7 @@ class ChatsFragment : BaseFragment({ R.layout.fragment_chats }) {
                 val userId = mUserItem[adapterPosition].user_id
                 startActivity(
                     Intent(MainActivity.sContext, MessageActivity::class.java)
-                        .putExtra("user_id", userId)
+                        .putExtra(KEY_USER_ID, userId)
                 )
             }
         }

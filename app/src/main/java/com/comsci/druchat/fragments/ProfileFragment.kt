@@ -15,6 +15,9 @@ import com.comsci.druchat.data.models.User
 import com.comsci.druchat.dialog.ChangeEmailDialog
 import com.comsci.druchat.dialog.ChangePasswordDialog
 import com.comsci.druchat.util.BaseFragment
+import com.comsci.druchat.util.KEY_DEFAULT
+import com.comsci.druchat.util.KEY_EMPTY
+import com.comsci.druchat.util.KEY_OFFLINE
 import com.theartofdev.edmodo.cropper.CropImage
 
 class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
@@ -49,14 +52,14 @@ class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
             mTvVerification.text = getString(R.string.verification_completed)
         } else {
             mTvVerification.text = getString(R.string.verification_not_completed)
-            mTvVerification.error = ""
+            mTvVerification.error = KEY_EMPTY
         }
 
         viewModel.getUser().observe(this, Observer {
             mUserItem = it
             mEtName.setText(mUserItem.name)
             mEtStatus.setText(mUserItem.status)
-            if (mUserItem.imageURL != "default") mIvProfile.loadCircle(mUserItem.imageURL)
+            if (mUserItem.imageURL != KEY_DEFAULT) mIvProfile.loadCircle(mUserItem.imageURL)
         })
 
         mIvProfile.setOnClickListener { viewModel.selectImage(true).start(activity!!, this) }
@@ -145,7 +148,7 @@ class ProfileFragment : BaseFragment({ R.layout.fragment_profile }) {
             R.string.logout_messages,
             R.drawable.ic_exit_to_app_black
         ) {
-            viewModel.setState("offline")
+            viewModel.setState(KEY_OFFLINE)
             viewModel.firebaseAuth().signOut()
             activity!!.finish()
             startActivity(

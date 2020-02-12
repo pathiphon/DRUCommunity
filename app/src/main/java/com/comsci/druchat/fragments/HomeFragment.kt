@@ -13,7 +13,7 @@ import com.comsci.druchat.MainActivity
 import com.comsci.druchat.MessageActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Follow
-import com.comsci.druchat.util.BaseFragment
+import com.comsci.druchat.util.*
 
 class HomeFragment : BaseFragment({R.layout.fragment_home}) {
 
@@ -40,20 +40,20 @@ class HomeFragment : BaseFragment({R.layout.fragment_home}) {
                 R.string.follow_friend,
                 "Do you want to follow ${it.name} ?",
                 R.drawable.ic_person_add_black
-            ) { updateFollow(it.user_id, "follow") }
+            ) { updateFollow(it.user_id, KEY_FOLLOW) }
         }
 
         mAdapter.unfollow = {
             //            "Do you want to cancel follow ${mUserItem[adapterPosition].name} ?"
             AlertDialog.Builder(activity!!).dialogNegative(R.string.un_follow_friend) {
-                updateFollow(it.user_id, "un_follow")
+                updateFollow(it.user_id, KEY_UN_FOLLOW)
             }
         }
 
         mAdapter.chat = {
             startActivity(
                 Intent(MainActivity.sContext, MessageActivity::class.java)
-                    .putExtra("user_id", it.user_id)
+                    .putExtra(KEY_USER_ID, it.user_id)
             )
         }
 
@@ -67,21 +67,21 @@ class HomeFragment : BaseFragment({R.layout.fragment_home}) {
 
     private fun fetchProfile() {
         viewModel.getUser().observe(this, Observer {
-            if (it.imageURL != "default") mIvProfile.loadCircle(it.imageURL)
+            if (it.imageURL != KEY_DEFAULT) mIvProfile.loadCircle(it.imageURL)
             mTvName.text = it.name
             mTvStatus.text = it.status
         })
     }
 
     private fun fetchFollow() {
-        mAdapter.typeList = "follow"
+        mAdapter.typeList = KEY_FOLLOW
         viewModel.getFollows().observe(this, Observer {
             mAdapter.setList(it)
         })
     }
 
     private fun fetchSearch(name: String) {
-        mAdapter.typeList = "search"
+        mAdapter.typeList = KEY_SEARCH
         viewModel.getSearch(name).observe(this, Observer {
             mAdapter.setList(it)
         })

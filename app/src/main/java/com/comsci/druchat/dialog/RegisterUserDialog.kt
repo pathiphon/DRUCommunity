@@ -50,7 +50,7 @@ class RegisterUserDialog : BaseDialogFragment(
                 mImageUri = result.uri
                 mIvProfile.loadCircle(mImageUri.toString())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                MainActivity.sContext.toast("${result.error}", Toast.LENGTH_LONG)
+                MainActivity.sContext.toast(result.error.message!!, Toast.LENGTH_LONG)
             }
         }
     }

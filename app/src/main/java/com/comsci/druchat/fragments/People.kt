@@ -5,6 +5,7 @@ import com.comsci.druchat.MainActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
 import com.comsci.druchat.fragments.MapsFragment.Companion.mMarkerPeople
+import com.comsci.druchat.util.KEY_DEFAULT
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -20,7 +21,7 @@ class People(googleMap: GoogleMap, users: ArrayList<User>, user_id: String) {
         mMarkerPeople.clear()
 
         for (user in users) {
-            if (user.imageURL == "default") {
+            if (user.imageURL == KEY_DEFAULT) {
                 setMarker(googleMap, user, BitmapDescriptorFactory.fromResource(R.drawable.ic_user))
             } else {
                 MainActivity.sContext.loadBitmap(user.imageURL, {

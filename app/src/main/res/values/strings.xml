@@ -59,5 +59,6 @@
     <string name="filed_required">All filed are required</string>
     <string name="edit_profile">Do you want to edit the profile?</string>
     <string name="profile_update_complete">Profile update complete</string>
+    <string name="click_verify">Click to Verify</string>
 
 </resources>

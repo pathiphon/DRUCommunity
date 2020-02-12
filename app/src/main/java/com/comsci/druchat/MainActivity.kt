@@ -31,7 +31,6 @@ class MainActivity : BaseActivity(),
     GoogleApiClient.OnConnectionFailedListener,
     LocationListener {
 
-    val TAG = "MainActivity"
     private lateinit var mLocationSwitchStateReceiver: BroadcastReceiver
 
     private lateinit var mGoogleApiClient: GoogleApiClient
