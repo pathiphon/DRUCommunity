@@ -1,7 +1,6 @@
 package com.comsci.druchat.ui.main.map
 
 import android.annotation.SuppressLint
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,18 +8,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.adedom.library.extension.getLocality
 import com.adedom.library.extension.loadImage
-import com.adedom.library.extension.toast
 import com.adedom.library.util.BaseFragment
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.User
 import com.comsci.druchat.data.viewmodel.BaseViewModel
 import com.comsci.druchat.ui.main.MainActivity
 import com.comsci.druchat.ui.main.MainActivity.Companion.sLatLng
-import com.comsci.druchat.ui.main.profile.ProfileFragment
 import com.comsci.druchat.util.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -36,7 +33,6 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
 
     private lateinit var mGoogleMap: GoogleMap
     private lateinit var mMapView: MapView
-    private val mMarkerPeople = arrayListOf<Marker>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,13 +42,6 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        if (!viewModel.currentUser()!!.isEmailVerified) {
-            MainActivity.sContext.toast(R.string.click_verify, Toast.LENGTH_LONG)
-            activity!!.supportFragmentManager.beginTransaction()
-                .replace(R.id.mFrameLayout, ProfileFragment())
-                .commit()
-        }
 
         mMapView = v.findViewById(R.id.mMapView)
         mMapView.onCreate(savedInstanceState)
@@ -103,23 +92,19 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
                     imgState.visibility = View.GONE
                 } else {
                     //image
-                    if (infoWindowData.imageURL != KEY_DEFAULT) {
+                    if (infoWindowData.imageURL != KEY_DEFAULT)
                         imgProfile.loadImage(infoWindowData.imageURL)
-                    }
 
                     //location
-                    val list = Geocoder(MainActivity.sContext).getFromLocation(
+                    val locality = MainActivity.sContext.getLocality(
                         infoWindowData.latitude,
-                        infoWindowData.longitude,
-                        1
+                        infoWindowData.longitude
                     )
-                    val locality = if (list[0].locality != null) list[0].locality else KEY_UNKNOWN
                     tvLocation.text = locality
 
                     //state
-                    if (infoWindowData.state != KEY_OFFLINE) {
+                    if (infoWindowData.state == KEY_ONLINE)
                         imgState.setImageResource(R.drawable.shape_state_green)
-                    }
                 }
                 return view
             }
@@ -141,7 +126,7 @@ class MapsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_maps }), On
 
     private fun setPeopleLocation() {
         viewModel.getUsers().observe(this, Observer {
-            People(mGoogleMap, mMarkerPeople, it as ArrayList<User>)
+            People(mGoogleMap, viewModel.markerPeople, it as ArrayList<User>)
         })
     }
 
