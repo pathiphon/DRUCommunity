@@ -28,7 +28,7 @@ class ForgotPasswordDialog : BaseDialogFragment<BaseViewModel>(
         super.initDialog(view)
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
-        mEtEmail = view.findViewById(R.id.mEdtEmail) as EditText
+        mEtEmail = view.findViewById(R.id.mEtEmail) as EditText
         mBtReset = view.findViewById(R.id.mBtnReset) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
 

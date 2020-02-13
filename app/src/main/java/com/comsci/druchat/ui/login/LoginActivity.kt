@@ -1,17 +1,12 @@
 package com.comsci.druchat.ui.login
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
-import com.adedom.library.extension.toast
 import com.adedom.library.util.PathiphonActivity
 import com.comsci.druchat.R
 import com.comsci.druchat.data.viewmodel.BaseViewModel
-import com.comsci.druchat.ui.main.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : PathiphonActivity() {
@@ -19,7 +14,7 @@ class LoginActivity : PathiphonActivity() {
     private lateinit var viewModel: BaseViewModel
 
     companion object {
-        lateinit var mContext: Context
+        lateinit var sContext: Context
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,53 +23,27 @@ class LoginActivity : PathiphonActivity() {
 
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
-        mContext = baseContext
-
-        mLogin.startAnimation(
-            AnimationUtils.loadAnimation(
-                mContext,
-                R.anim.fade_in
-            )
-        )
+        sContext = baseContext
 
         init()
 
     }
 
     private fun init() {
-        mTvForgotPassword.setOnClickListener {
-            ForgotPasswordDialog().show(
-                supportFragmentManager,
-                null
+        mLogin.startAnimation(
+            AnimationUtils.loadAnimation(
+                sContext,
+                R.anim.fade_in
             )
+        )
+
+        mBtEmail.setOnClickListener {
+            EmailDialog().show(supportFragmentManager, null)
         }
-        mBtnReg.setOnClickListener {
-            RegisterUserDialog()
-                .show(supportFragmentManager, null)
-        }
-        mBtnLogin.setOnClickListener { login() }
-    }
 
-    private fun login() {
-        val email = mEdtEmail.text.toString().trim()
-        val password = mEdtPassword.text.toString().trim()
-
-        mProgressBar.visibility = View.VISIBLE
-
-        if (email.isEmpty() || password.isEmpty()) {
-            baseContext.toast(R.string.filed_required, Toast.LENGTH_LONG)
-        } else {
-            viewModel.firebaseSignInWithEmailAndPassword(email, password, {
-                mProgressBar.visibility = View.INVISIBLE
-                finish()
-                startActivity(
-                    Intent(baseContext, MainActivity::class.java)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                )
-            }, {
-                mProgressBar.visibility = View.INVISIBLE
-                baseContext.toast(it, Toast.LENGTH_LONG)
-            })
+        mBtPhone.setOnClickListener {
+            PhoneDialog().show(supportFragmentManager, null)
         }
     }
+
 }

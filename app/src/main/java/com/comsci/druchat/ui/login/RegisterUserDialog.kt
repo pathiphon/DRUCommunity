@@ -31,11 +31,11 @@ class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         mEtName = view.findViewById(R.id.mEdtName) as EditText
-        mEtEmail = view.findViewById(R.id.mEdtEmail) as EditText
-        mEtPassword = view.findViewById(R.id.mEdtPassword) as EditText
+        mEtEmail = view.findViewById(R.id.mEtEmail) as EditText
+        mEtPassword = view.findViewById(R.id.mEtPassword) as EditText
         mEtRePassword = view.findViewById(R.id.mEdtRePassword) as EditText
         mIvProfile = view.findViewById(R.id.mImgProfile) as ImageView
-        mBtReg = view.findViewById(R.id.mBtnReg) as Button
+        mBtReg = view.findViewById(R.id.mBtReg) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
 
         mIvProfile.setOnClickListener { viewModel.selectImage(true).start(activity!!, this) }
@@ -83,28 +83,32 @@ class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
             if (viewModel.imageUri == null) {
                 viewModel.insertUser(name, onComplete = {
                     mProgressBar.visibility = View.INVISIBLE
-
                     startActivity(
-                        Intent(LoginActivity.mContext, MainActivity::class.java)
+                        Intent(LoginActivity.sContext, MainActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     )
-                }, onFailed = { LoginActivity.mContext.toast(it) })
+                }, onFailed = {
+                    mProgressBar.visibility = View.INVISIBLE
+                    LoginActivity.sContext.toast(it, Toast.LENGTH_LONG)
+                })
             } else {
                 viewModel.firebaseUploadImage(true, viewModel.imageUri!!, { url ->
                     viewModel.insertUser(name, url, {
                         mProgressBar.visibility = View.INVISIBLE
-
                         startActivity(
-                            Intent(LoginActivity.mContext, MainActivity::class.java)
+                            Intent(LoginActivity.sContext, MainActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         )
-                    }, { LoginActivity.mContext.toast(it) })
-                }, { LoginActivity.mContext.toast(it, Toast.LENGTH_LONG) })
+                    }, {
+                        mProgressBar.visibility = View.INVISIBLE
+                        LoginActivity.sContext.toast(it)
+                    })
+                }, { LoginActivity.sContext.toast(it, Toast.LENGTH_LONG) })
             }
         }, {
             mProgressBar.visibility = View.GONE
             dialog!!.dismiss()
-            LoginActivity.mContext.toast(it, Toast.LENGTH_LONG)
+            LoginActivity.sContext.toast(it, Toast.LENGTH_LONG)
         })
     }
 

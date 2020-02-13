@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.adedom.library.extension.exitApplication
 import com.adedom.library.extension.toast
 import com.comsci.druchat.R
@@ -54,8 +55,19 @@ class MainActivity : BaseActivity(),
             )
             finish()
             return
+        } else {
+            viewModel.getUser(viewModel.currentUserId()!!).observe(this, Observer { user ->
+                viewModel.updateProfile(user.name, user.status, user.imageURL, {}, {
+                    baseContext.toast(it, Toast.LENGTH_LONG)
+                })
+            })
         }
 
+        init(savedInstanceState)
+
+    }
+
+    private fun init(savedInstanceState: Bundle?) {
         mBottomNavigationView.setOnNavigationItemSelectedListener(this)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -63,8 +75,17 @@ class MainActivity : BaseActivity(),
                 .commit()
         }
 
-        setMapAndLocation()
+        mGoogleApiClient = GoogleApiClient.Builder(this)
+            .addApi(LocationServices.API)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .build()
+        mGoogleApiClient.connect()
 
+        mLocationRequest = LocationRequest()
+            .setInterval(10000)
+            .setFastestInterval(10000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -82,20 +103,6 @@ class MainActivity : BaseActivity(),
             .replace(R.id.mFrameLayout, fragment!!)
             .commit()
         return true
-    }
-
-    private fun setMapAndLocation() {
-        mGoogleApiClient = GoogleApiClient.Builder(this)
-            .addApi(LocationServices.API)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .build()
-        mGoogleApiClient.connect()
-
-        mLocationRequest = LocationRequest()
-            .setInterval(10000)
-            .setFastestInterval(10000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
     }
 
     override fun onConnected(p0: Bundle?) = startLocationUpdate()
