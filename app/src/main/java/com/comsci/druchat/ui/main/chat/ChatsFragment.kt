@@ -38,7 +38,6 @@ class ChatsFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_chats }) {
     }
 
     private fun fetchChatList() {
-        //todo count no read
         viewModel.getChatListUsers().observe(this, Observer {
             mAdapter.setList(it)
         })
