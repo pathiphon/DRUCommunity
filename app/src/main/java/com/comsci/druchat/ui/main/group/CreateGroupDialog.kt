@@ -27,7 +27,7 @@ class CreateGroupDialog : BaseDialogFragment<BaseViewModel>(
         viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
 
         mEtName = view.findViewById(R.id.mEdtName) as EditText
-        mEtPassword = view.findViewById(R.id.mEdtPassword) as EditText
+        mEtPassword = view.findViewById(R.id.mEtPassword) as EditText
         mBtCreateGroup = view.findViewById(R.id.mBtnCreateGroup) as Button
         mProgressBar = view.findViewById(R.id.mProgressBar) as ProgressBar
 
