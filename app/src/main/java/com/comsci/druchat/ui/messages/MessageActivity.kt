@@ -49,6 +49,15 @@ class MessageActivity : BaseActivity() {
 
         mIvSend.setOnClickListener { sendMessage() }
         mIvImage.setOnClickListener { viewModel.selectImage(false).start(this) }
+
+        mAdapter.onClickImage = {
+            val bundle = Bundle()
+            bundle.putString(KEY_IMAGE, it)
+
+            val dialog = ImageDialog()
+            dialog.arguments = bundle
+            dialog.show(supportFragmentManager, null)
+        }
     }
 
     private fun fetchChats() {

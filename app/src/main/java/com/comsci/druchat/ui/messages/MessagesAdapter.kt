@@ -11,6 +11,7 @@ import com.adedom.library.extension.loadBitmap
 import com.adedom.library.extension.loadImage
 import com.comsci.druchat.R
 import com.comsci.druchat.data.models.Messages
+import com.comsci.druchat.util.KEY_EMPTY
 import com.comsci.druchat.util.MessagesType
 import com.comsci.druchat.util.extension.getDateTime
 
@@ -19,6 +20,7 @@ class MessagesAdapter(private val userId: String) :
 
     private var items = ArrayList<Messages>()
     private lateinit var MSG_TYPE: MessagesType
+    var onClickImage: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagesHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -53,11 +55,19 @@ class MessagesAdapter(private val userId: String) :
         if (chat.isread) holder.mTvRead.visibility = View.VISIBLE
 
         //image
-        if (chat.message.isEmpty()) {
+        if (chat.image.isNotEmpty()) {
             holder.mTvMessage.visibility = View.GONE
             holder.mIvImage.visibility = View.VISIBLE
             holder.mIvImage.loadBitmap(chat.image, {
-                if (it.width > it.height) holder.mIvImage.layoutParams.height = 300
+                if (it.width > it.height) {
+                    // -
+                    holder.mIvImage.layoutParams.height = 300
+                    holder.mIvImage.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                } else {
+                    // |
+                    holder.mIvImage.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    holder.mIvImage.layoutParams.width = 300
+                }
                 holder.mIvImage.loadImage(chat.image)
             })
         }
@@ -94,6 +104,15 @@ class MessagesAdapter(private val userId: String) :
         val mTvTime: TextView = itemView.findViewById(R.id.mTvTime)
         val mTvDate: TextView = itemView.findViewById(R.id.mTvDate)
         val mTvLocation: TextView = itemView.findViewById(R.id.mTvLocation)
+
+        init {
+            itemView.setOnClickListener {
+                val image = items[adapterPosition].image
+                if (image != KEY_EMPTY) {
+                    onClickImage?.invoke(image)
+                }
+            }
+        }
     }
 
 }
