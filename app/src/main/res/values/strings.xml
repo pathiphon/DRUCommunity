@@ -52,7 +52,11 @@
     <string name="enter_name">Please enter name</string>
     <string name="enter_email">Please enter e-mail</string>
     <string name="enter_password">Please enter password</string>
+    <string name="enter_phone">Please enter phone</string>
+    <string name="enter_phone_code">Please enter phone code</string>
     <string name="enter_length_password_8">Minimum length of password should be 8</string>
+    <string name="enter_length_phone_10">The length of the phone is 10</string>
+    <string name="enter_length_phone_6">The length of the phone code is 6</string>
     <string name="enter_not_match">Password do not match</string>
     <string name="check_your_email">Please check your Email</string>
     <string name="already_registered">You are already registered</string>
@@ -60,5 +64,10 @@
     <string name="edit_profile">Do you want to edit the profile?</string>
     <string name="profile_update_complete">Profile update complete</string>
     <string name="click_verify">Click to Verify</string>
+    <string name="image">Image</string>
+    <string name="phone">Phone</string>
+    <string name="phone_number">0951234567</string>
+    <string name="get_verification_code">Get verification code</string>
+    <string name="enter_code_received">Enter code received</string>
 
 </resources>
