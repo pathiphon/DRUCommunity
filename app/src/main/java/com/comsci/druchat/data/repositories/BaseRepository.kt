@@ -1,19 +1,20 @@
 package com.comsci.druchat.data.repositories
 
+import android.app.Activity
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.adedom.library.extension.addListenerForSingleValueEvent
 import com.adedom.library.extension.addValueEventListener
 import com.comsci.druchat.data.models.*
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import java.util.concurrent.TimeUnit
 
 class BaseRepository {
 
@@ -206,8 +207,9 @@ class BaseRepository {
 
     fun setRead() = mChats.removeEventListener(mReadListener)
 
+    //todo insertUser name & image
     fun insertUser(
-        name: String,
+        name: String = "",
         imgUrl: String = "default",
         onComplete: () -> Unit,
         onFailed: (String) -> Unit
@@ -223,9 +225,9 @@ class BaseRepository {
     }
 
     fun updateProfile(
-        name: String,
-        status: String,
-        imageUrl: String,
+        name: String = "",
+        status: String = "",
+        imageUrl: String = "",
         onComplete: () -> Unit,
         onFailed: (String) -> Unit
     ) {
@@ -238,6 +240,56 @@ class BaseRepository {
                 onComplete.invoke()
             } else {
                 onFailed.invoke(task.exception!!.message!!)
+            }
+        }
+    }
+
+    fun firebaseVerifyPhoneNumber(
+        activity: Activity?,
+        phone: String,
+        onComplete: (String) -> Unit,
+        onFailed: (String) -> Unit,
+        onCodeSent: (String) -> Unit
+    ) {
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+            phone,
+            60,
+            TimeUnit.SECONDS,
+            activity!!,
+            object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(pac: PhoneAuthCredential) {
+                    onComplete.invoke(pac.smsCode!!)
+                }
+
+                override fun onVerificationFailed(fe: FirebaseException) {
+                    onFailed.invoke(fe.message!!)
+                }
+
+                override fun onCodeSent(
+                    s: String,
+                    forceResendingToken: PhoneAuthProvider.ForceResendingToken
+                ) {
+                    super.onCodeSent(s, forceResendingToken)
+                    onCodeSent.invoke(s)
+                }
+            }
+        )
+    }
+
+    fun firebaseSignInWithCredential(
+        codeSent: String?,
+        code: String,
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
+    ) {
+        val credential = PhoneAuthProvider.getCredential(codeSent!!, code)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
+            if (it.isSuccessful) {
+                onComplete.invoke()
+            } else {
+                if (it.exception is FirebaseAuthInvalidCredentialsException) {
+                    onFailed.invoke(it.exception!!.message!!)
+                }
             }
         }
     }

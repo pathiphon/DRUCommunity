@@ -1,5 +1,6 @@
 package com.comsci.druchat.data.viewmodel
 
+import android.app.Activity
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.comsci.druchat.data.models.Follow
@@ -53,19 +54,34 @@ class BaseViewModel : ViewModel() {
     fun setRead() = repo.setRead()
 
     fun insertUser(
-        name: String,
+        name: String = "",
         imgUrl: String = "default",
         onComplete: () -> Unit,
         onFailed: (String) -> Unit
     ) = repo.insertUser(name, imgUrl, onComplete, onFailed)
 
     fun updateProfile(
-        name: String,
-        status: String,
-        imageUrl: String,
+        name: String = "",
+        status: String = "",
+        imageUrl: String = "",
         onComplete: () -> Unit,
         onFailed: (String) -> Unit
     ) = repo.updateProfile(name, status, imageUrl, onComplete, onFailed)
+
+    fun firebaseVerifyPhoneNumber(
+        activity: Activity?,
+        phone: String,
+        onComplete: (String) -> Unit,
+        onFailed: (String) -> Unit,
+        onCodeSent: (String) -> Unit
+    ) = repo.firebaseVerifyPhoneNumber(activity, phone, onComplete, onFailed, onCodeSent)
+
+    fun firebaseSignInWithCredential(
+        codeSent: String?,
+        code: String,
+        onComplete: () -> Unit,
+        onFailed: (String) -> Unit
+    ) = repo.firebaseSignInWithCredential(codeSent, code, onComplete, onFailed)
 
     fun firebaseUpdateEmail(
         oldPassword: String,
