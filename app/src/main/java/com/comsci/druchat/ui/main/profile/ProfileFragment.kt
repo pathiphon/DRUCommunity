@@ -124,17 +124,19 @@ class ProfileFragment : BaseFragment<BaseViewModel>({ R.layout.fragment_profile 
                             MainActivity.sContext.toast(R.string.profile_update_complete)
                         }, {
                             mProgressBar.visibility = View.INVISIBLE
+                            MainActivity.sContext.toast(it, Toast.LENGTH_LONG)
                         })
                     }
                     mImageUri != null -> {
-                        viewModel.firebaseUploadImage(true, mImageUri!!, {
+                        viewModel.firebaseUploadImage(true, mImageUri!!, { url ->
                             mProgressBar.visibility = View.INVISIBLE
-                            viewModel.updateProfile(name, status, it, {
+                            viewModel.updateProfile(name, status, url, {
                                 mImageUri = null
                                 mProgressBar.visibility = View.INVISIBLE
                                 MainActivity.sContext.toast(R.string.profile_update_complete)
                             }, {
                                 mProgressBar.visibility = View.INVISIBLE
+                                MainActivity.sContext.toast(it, Toast.LENGTH_LONG)
                             })
                         }, {
                             mProgressBar.visibility = View.INVISIBLE
