@@ -15,7 +15,7 @@
         <com.google.android.material.textfield.TextInputLayout style="@style/MatchWrap">
 
             <EditText
-                    android:id="@+id/mEdtEmail"
+                    android:id="@+id/mEtEmail"
                     style="@style/EditTextEmail"
                     android:hint="@string/e_mail" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -23,7 +23,7 @@
         <com.google.android.material.textfield.TextInputLayout style="@style/MatchWrap">
 
             <EditText
-                    android:id="@+id/mEdtPassword"
+                    android:id="@+id/mEtPassword"
                     style="@style/EditTextPassword"
                     android:hint="@string/password" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,7 +42,7 @@
                 android:layout_marginTop="@dimen/layout" />
 
         <Button
-                android:id="@+id/mBtnReg"
+                android:id="@+id/mBtReg"
                 style="@style/Button"
                 android:text="@string/register" />
     </LinearLayout>

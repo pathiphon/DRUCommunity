@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.login.PhoneDialog">
+        style="@style/MatchMatch"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/layout">
 
     <LinearLayout
             style="@style/MatchWrap"
             android:orientation="vertical">
 
+        <EditText
+                android:id="@+id/mEtPhoneNumber"
+                style="@style/EditText"
+                android:layout_height="40dp"
+                android:digits="0123456789"
+                android:hint="@string/phone_number"
+                android:inputType="phone" />
+
+        <Button
+                android:id="@+id/mBtVerificationCode"
+                style="@style/ButtonMatch"
+                android:text="@string/get_verification_code" />
+
+        <EditText
+                android:id="@+id/mEtCodeSent"
+                style="@style/EditText"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:digits="0123456789"
+                android:enabled="false"
+                android:hint="@string/enter_code_received"
+                android:inputType="number" />
+
+        <Button
+                android:id="@+id/mBtLogin"
+                style="@style/ButtonMatch"
+                android:enabled="false"
+                android:text="@string/login" />
     </LinearLayout>
+
+    <ProgressBar
+            android:id="@+id/mProgressBar"
+            style="@style/ProgressBar" />
 
 </RelativeLayout>
