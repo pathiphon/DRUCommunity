@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.adedom.library.extension.addListenerForSingleValueEvent
 import com.adedom.library.extension.addValueEventListener
-import com.comsci.druchat.data.models.ChatList
-import com.comsci.druchat.data.models.Follow
-import com.comsci.druchat.data.models.Messages
-import com.comsci.druchat.data.models.User
+import com.comsci.druchat.data.models.*
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -95,8 +92,8 @@ class BaseRepository {
         return liveData
     }
 
-    fun getChatListUsers(): LiveData<List<User>> {
-        val liveData = MutableLiveData<List<User>>()
+    fun getChatListUsers(): LiveData<List<ChatUser>> {
+        val liveData = MutableLiveData<List<ChatUser>>()
         mChatList.child(currentUserId!!).addValueEventListener { dataSnapshot ->
             val chatList = arrayListOf<ChatList>()
             for (snapshot in dataSnapshot.children) {
@@ -107,12 +104,23 @@ class BaseRepository {
             chatList.sortWith(compareBy(ChatList::key))
             chatList.reverse()
 
-            val chatListUsers = arrayListOf<User>()
+            val chatUser = arrayListOf<ChatUser>()
             for (item in chatList) {
-                mUsers.child(item.user_id).addListenerForSingleValueEvent {
-                    val user = it.getValue(User::class.java)
-                    chatListUsers.add(user!!)
-                    liveData.value = chatListUsers
+                mUsers.child(item.user_id).addListenerForSingleValueEvent { dataSnapshot ->
+                    val user = dataSnapshot.getValue(ChatUser::class.java)
+
+                    mChats.addListenerForSingleValueEvent {
+                        var unread = 0
+                        for (snapshot in it.children) {
+                            val messages = snapshot.getValue(Messages::class.java)!!
+                            if (messages.sender == item.user_id && !messages.isread) {
+                                unread++
+                            }
+                        }
+                        val cu = ChatUser(user!!.user_id, user.name, user.imageURL, unread)
+                        chatUser.add(cu)
+                        liveData.value = chatUser
+                    }
                 }
             }
         }
@@ -331,8 +339,11 @@ class BaseRepository {
         imgUrl: (String) -> Unit,
         onFailed: (String) -> Unit
     ) {
-        val storage = if (profile) storageProfile else storageImage
-        storage.child("${System.currentTimeMillis()}.jpg")
+        val storage = if (profile) {
+            storageProfile.child("${System.currentTimeMillis()}.jpg")
+        } else {
+            storageImage.child("${System.currentTimeMillis()}.jpg")
+        }
         val uploadTask = storage.putFile(uri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {

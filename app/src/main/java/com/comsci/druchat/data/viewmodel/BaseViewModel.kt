@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import com.comsci.druchat.data.models.Follow
 import com.comsci.druchat.data.models.Messages
 import com.comsci.druchat.data.repositories.BaseRepository
+import com.google.android.gms.maps.model.Marker
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 
 class BaseViewModel : ViewModel() {
 
     private val repo = BaseRepository()
+    val markerPeople by lazy { ArrayList<Marker>() }
     var imageUri: Uri? = null
 
     fun firebaseAuth() = repo.firebaseAuth
@@ -109,6 +111,7 @@ class BaseViewModel : ViewModel() {
     fun selectImage(profile: Boolean): CropImage.ActivityBuilder {
         return if (profile) {
             CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
                 .setOutputCompressQuality(50)
                 .setRequestedSize(150, 150)
                 .setMinCropWindowSize(150, 150)
@@ -117,6 +120,8 @@ class BaseViewModel : ViewModel() {
             CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setOutputCompressQuality(10)
+                .setMaxCropResultSize(1500, 1500)
+                .setMinCropWindowSize(150, 150)
         }
     }
 
