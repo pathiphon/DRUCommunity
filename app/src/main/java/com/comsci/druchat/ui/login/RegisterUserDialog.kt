@@ -83,6 +83,7 @@ class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
             if (viewModel.imageUri == null) {
                 viewModel.insertUser(name, onComplete = {
                     mProgressBar.visibility = View.INVISIBLE
+                    activity!!.finish()
                     startActivity(
                         Intent(LoginActivity.sContext, MainActivity::class.java)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -95,6 +96,7 @@ class RegisterUserDialog : BaseDialogFragment<BaseViewModel>(
                 viewModel.firebaseUploadImage(true, viewModel.imageUri!!, { url ->
                     viewModel.insertUser(name, url, {
                         mProgressBar.visibility = View.INVISIBLE
+                        activity!!.finish()
                         startActivity(
                             Intent(LoginActivity.sContext, MainActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

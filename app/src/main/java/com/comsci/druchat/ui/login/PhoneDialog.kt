@@ -88,6 +88,7 @@ class PhoneDialog : BaseDialogFragment<BaseViewModel>(
 
         viewModel.firebaseSignInWithCredential(codeSent, code, {
             mProgressBar.visibility = View.INVISIBLE
+            activity!!.finish()
             startActivity(
                 Intent(LoginActivity.sContext, MainActivity::class.java)
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
