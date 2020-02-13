@@ -5,7 +5,7 @@ import java.util.*
 
 fun Boolean.getDateTime(dateTime: Long): String {
     return if (this) {
-        SimpleDateFormat("EEE, dd MMM yy", Locale.ENGLISH).format(dateTime)
+        SimpleDateFormat("EEE, dd MMM yy", Locale.getDefault()).format(dateTime)
     } else {
         SimpleDateFormat("HH:mm", Locale.ENGLISH).format(dateTime)
     }
